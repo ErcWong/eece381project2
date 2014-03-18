@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
+	PianoView piano_view;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		piano_view = new PianoView( this );
+		setContentView( piano_view );
 	}
 
 	@Override
