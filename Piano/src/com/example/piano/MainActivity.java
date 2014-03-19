@@ -14,7 +14,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		piano_view = new PianoView( this );
+		piano_view = new PianoView( this, null );
 		setContentView( piano_view );
 	}
 
