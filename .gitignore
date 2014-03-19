@@ -11,11 +11,8 @@
 
 .settings/
 bin/
-logs/
-target/
 
 # Package Files #
 *.jar
 *.war
 *.ear
-/target
