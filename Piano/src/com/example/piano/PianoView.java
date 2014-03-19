@@ -11,11 +11,11 @@ import android.util.DisplayMetrics;
 import android.view.View;
 
 public class PianoView extends View {
-	private PianoKey keys;
-	public int bottom, top, right, left; 
-	public float scale;
-	public int whitekey_max = 7;
-	public int blackkey_max = 5;
+	private PianoKey[] keys;
+	protected int bottom, top, right, left; 
+	protected float scale;
+	protected int whitekey_max = 7;
+	protected int blackkey_max = 5;
 
 	public PianoView(Context context) {
 		super(context);
@@ -25,8 +25,12 @@ public class PianoView extends View {
 	    scale = metrics.densityDpi; 
 	    
 	    int whitekey_count;
+	    int blackkey_count;
 	    for( whitekey_count=0; whitekey_count<whitekey_max; whitekey_count++ ) {
-	    	
+	    	//create white keys
+	    }
+	    for( blackkey_count=0; blackkey_count<blackkey_max; blackkey_count++ ) {
+	    	//create black keys
 	    }
 	}
 	
