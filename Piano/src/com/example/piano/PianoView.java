@@ -34,13 +34,17 @@ public class PianoView extends View {
 	}
 	
 	@Override
-	public void onDraw(Canvas canvas) {
+	protected void onDraw(Canvas canvas) {
 		canvas.drawColor(Color.WHITE);
 		Paint paint = new Paint();
 		
-		paint.setColor(Color.RED);
-		for( int drawWhiteKey = 0; drawWhiteKey <- whitekey_max; ++drawWhiteKey ) { 
-			canvas.drawRect( keys[drawWhiteKey].rect, paint);
+		for( int drawWhiteKey = 0; drawWhiteKey <= whitekey_max; ++drawWhiteKey ) { 
+			paint.setColor(Color.BLACK);
+			canvas.drawRect( keys[drawWhiteKey].rect.left, keys[drawWhiteKey].rect.top, keys[drawWhiteKey].rect.right, 
+					keys[drawWhiteKey].rect.bottom, paint);
+			paint.setColor(Color.RED);
+			canvas.drawRect( keys[drawWhiteKey].rect.left-5, keys[drawWhiteKey].rect.top-5, keys[drawWhiteKey].rect.right-5, 
+					keys[drawWhiteKey].rect.bottom-5, paint);
 		}
 	}
 }

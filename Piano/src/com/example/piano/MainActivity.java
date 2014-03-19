@@ -1,6 +1,6 @@
 package com.example.piano;
 
-import android.R;
+
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		//setContentView(R.layout.activity_main);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		piano_view = new PianoView( this, null );
 		setContentView( piano_view );

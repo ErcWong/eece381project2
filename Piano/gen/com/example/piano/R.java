@@ -27,7 +27,7 @@ public final class R {
         public static final int whitekey=0x7f020003;
     }
     public static final class id {
-        public static final int LinearLayout1=0x7f080000;
+        public static final int LinearLayout2=0x7f080000;
         public static final int action_settings=0x7f080001;
     }
     public static final class layout {
