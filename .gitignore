@@ -8,7 +8,6 @@
 # Java Files
 *.class
 .classpath
-.project
 
 .settings/
 bin/
