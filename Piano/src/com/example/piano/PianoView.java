@@ -3,24 +3,31 @@
 */
 package src.com.example.piano;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.View;
 
 public class PianoView extends View {
-	private Rect drawingRect;
-	public int bottom, top, right, left; 
-	public float scale;
+	private PianoKey[] keys;
+	protected int bottom, top, right, left; 
+	protected float scale;
+	protected int whitekey_max = 7;
+	protected int blackkey_max = 5;
 
 	public PianoView(Context context) {
 		super(context);
-		drawingRect = new Rect(); 
+		keys = new PianoKey[whitekey_max + blackkey_max];
 		DisplayMetrics metrics = new DisplayMetrics();    
-	    getWindowManager().getDefaultDisplay().getMetrics(metrics);    
+		((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics);    
 	    scale = metrics.densityDpi; 
+	    
+	    int whitekey_count;
+	    for( whitekey_count=0; whitekey_count<whitekey_max; whitekey_count++ ) {
+	    	
+	    }
 	}
 	
 	@Override
