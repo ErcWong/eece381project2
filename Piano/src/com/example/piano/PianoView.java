@@ -11,11 +11,19 @@ import android.util.DisplayMetrics;
 import android.view.View;
 
 public class PianoView extends View {
+<<<<<<< HEAD
 	private PianoKey[] keys;
 	protected int bottom, top, right, left; 
 	protected float scale;
 	protected int whitekey_max = 7;
 	protected int blackkey_max = 5;
+=======
+	private PianoKey keys;
+	public int bottom, top, right, left; 
+	public float scale;
+	public int whitekey_max = 7;
+	public int blackkey_max = 5;
+>>>>>>> 84ea2aef860168653bcabee64a018260bbbf62b2
 
 	public PianoView(Context context) {
 		super(context);
