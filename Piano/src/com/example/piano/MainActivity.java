@@ -1,4 +1,4 @@
-package com.example.piano;
+package src.com.example.piano;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
