@@ -6,12 +6,7 @@
 *.out
 
 # Java Files
-*.class
-.classpath
 
-.settings/
-bin/
-logs/
 target/
 
 # Package Files #
