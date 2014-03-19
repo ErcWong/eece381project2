@@ -1,4 +1,4 @@
-package src.com.example.piano;
+package com.example.piano;
 
 public class WhitePianoKey extends PianoKey {
 	protected int whiteKeyBaseHeight = 1;

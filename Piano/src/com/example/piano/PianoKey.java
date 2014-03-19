@@ -1,7 +1,7 @@
 /*
  * Class for handling keys and touch events
 */
-package src.com.example.piano;
+package com.example.piano;
 
 import android.graphics.Rect;
 

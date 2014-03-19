@@ -1,5 +1,6 @@
-package src.com.example.piano;
+package com.example.piano;
 
+import android.R;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
