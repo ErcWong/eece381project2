@@ -6,18 +6,26 @@ public class BlackPianoKey extends PianoKey {
 		super(piano);
 		
 		rect.top = (int)height;
-		rect.bottom = rect.top + (int)((2 * height) * 0.333333);
-		if( key < 3 ) {
-			rect.left = (int)(( key - 1 ) * (width * 0.75));
+		rect.bottom = rect.top + (int)((2 * height) * 0.666666);
+		if( key == 1 ) {
+			rect.right = (int)( width + width * 0.25 );
+			rect.left = rect.right - (int)(width * 0.6);
+		}
+		else if( key == 2 ) {
+			rect.left = (int)( width + width * 0.75 );
+			rect.right = rect.left + (int)(width * 0.6);
+		}
+		else if( key == 3 )	{
+			rect.right = (int)( (4 * width) + width * 0.25 );
+			rect.left = rect.right - (int)(width * 0.6);
+		}
+		else if( key == 4 ) {
+			rect.left = (int)( (5 * width) - (width * 0.3) );
+			rect.right = rect.left + (int)(width * 0.6);
 		}
 		else {
-			rect.left = (int)( (( key - 1 ) * (width * 0.75)) + (3 * width) );	
-		}		
-		rect.right = rect.left + (int)(width/2);
-		
-		/*rect.top = (int)height;
-		rect.bottom = rect.top + (int)height;
-		rect.left = (( key - 1 ) * (int)width);
-		rect.right = rect.left + (int)width;*/
+			rect.left = (int)( (5 * width) + width * 0.75 );
+			rect.right = rect.left + (int)(width * 0.6);
+		}
 	}
 }

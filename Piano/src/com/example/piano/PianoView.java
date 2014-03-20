@@ -23,7 +23,7 @@ public class PianoView extends View {
 
 	public PianoView(Context context, AttributeSet attribute_set) {
 		super(context, attribute_set);
-		keys = new PianoKey[12];
+		keys = new PianoKey[20];
 		DisplayMetrics metrics = new DisplayMetrics();    
 		((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics);    
 	    scale = metrics.densityDpi; 
@@ -37,10 +37,10 @@ public class PianoView extends View {
 	    int key_total = 0;
 	    for( int note = 0; note <= 7; ++note ) {
 	    	keys[key_total++] = new WhitePianoKey( this, note, screenKeyHeight, screenKeyWidth );
-	    }
-	    /*for( int note = 0; note <= 5; ++note ) {
+	   }
+	    for( int note = 0; note <= 5; ++note ) {
 	    	keys[key_total++] = new BlackPianoKey( this, note, screenKeyHeight, screenKeyWidth );	    
-	    }*/
+	    }
 	}
 	
 	@Override	
@@ -57,14 +57,14 @@ public class PianoView extends View {
 					keys[drawWhiteKey].rect.bottom-5, paint);
 		}
 		
-		/*for( int drawBlackKey = 0; drawBlackKey <= blackkey_max; ++drawBlackKey ) { 
-			paint.setColor(Color.GREEN);
+		for( int drawBlackKey = 8; drawBlackKey <= 13; ++drawBlackKey ) { 
+			//paint.setColor(Color.WHITE);
+			//canvas.drawRect( keys[drawBlackKey].rect.left, keys[drawBlackKey].rect.top, keys[drawBlackKey].rect.right, 
+				//	keys[drawBlackKey].rect.bottom, paint);
+			paint.setColor(Color.BLACK);
 			canvas.drawRect( keys[drawBlackKey].rect.left, keys[drawBlackKey].rect.top, keys[drawBlackKey].rect.right, 
 					keys[drawBlackKey].rect.bottom, paint);
-			paint.setColor(Color.BLACK);
-			canvas.drawRect( keys[drawBlackKey].rect.left+5, keys[drawBlackKey].rect.top+5, keys[drawBlackKey].rect.right-5, 
-					keys[drawBlackKey].rect.bottom-5, paint);
-		}*/
+		}
 	}
 }
 	
