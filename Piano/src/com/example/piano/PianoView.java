@@ -14,11 +14,7 @@ import android.view.View;
 
 public class PianoView extends View {
 	private PianoKey[] keys;
-	//protected int bottom, top, right, left; 
 	protected float scale;
-	//protected int key_total = 0;
-	private int whitekey_max = 7;
-	private int blackkey_max = 5;
 	public float screenKeyWidth, screenKeyHeight;
 
 	public PianoView(Context context, AttributeSet attribute_set) {
@@ -35,10 +31,10 @@ public class PianoView extends View {
 	    screenKeyHeight = (float)(point.y * 0.3333333);
 	    
 	    int key_total = 0;
-	    for( int note = 0; note <= 7; ++note ) {
+	    for( int note = 0; note <= 7; ++note ) { // create white keys
 	    	keys[key_total++] = new WhitePianoKey( this, note, screenKeyHeight, screenKeyWidth );
 	   }
-	    for( int note = 0; note <= 5; ++note ) {
+	    for( int note = 0; note <= 5; ++note ) { // create black keys
 	    	keys[key_total++] = new BlackPianoKey( this, note, screenKeyHeight, screenKeyWidth );	    
 	    }
 	}
@@ -48,7 +44,7 @@ public class PianoView extends View {
 		canvas.drawColor(Color.WHITE);
 		Paint paint = new Paint();
 		
-		for( int drawWhiteKey = 0; drawWhiteKey <= 7; ++drawWhiteKey ) { 
+		for( int drawWhiteKey = 0; drawWhiteKey <= 7; ++drawWhiteKey ) {  // draw white keys
 			paint.setColor(Color.BLACK);
 			canvas.drawRect( keys[drawWhiteKey].rect.left, keys[drawWhiteKey].rect.top, keys[drawWhiteKey].rect.right, 
 					keys[drawWhiteKey].rect.bottom, paint);
@@ -57,10 +53,7 @@ public class PianoView extends View {
 					keys[drawWhiteKey].rect.bottom-5, paint);
 		}
 		
-		for( int drawBlackKey = 8; drawBlackKey <= 13; ++drawBlackKey ) { 
-			//paint.setColor(Color.WHITE);
-			//canvas.drawRect( keys[drawBlackKey].rect.left, keys[drawBlackKey].rect.top, keys[drawBlackKey].rect.right, 
-				//	keys[drawBlackKey].rect.bottom, paint);
+		for( int drawBlackKey = 8; drawBlackKey <= 13; ++drawBlackKey ) { //draw black keys
 			paint.setColor(Color.BLACK);
 			canvas.drawRect( keys[drawBlackKey].rect.left, keys[drawBlackKey].rect.top, keys[drawBlackKey].rect.right, 
 					keys[drawBlackKey].rect.bottom, paint);
