@@ -45,18 +45,11 @@ public class PianoView extends View {
 		Paint paint = new Paint();
 		
 		for( int drawWhiteKey = 0; drawWhiteKey <= 7; ++drawWhiteKey ) {  // draw white keys
-			paint.setColor(Color.BLACK);
-			canvas.drawRect( keys[drawWhiteKey].rect.left, keys[drawWhiteKey].rect.top, keys[drawWhiteKey].rect.right, 
-					keys[drawWhiteKey].rect.bottom, paint);
-			paint.setColor(Color.WHITE);
-			canvas.drawRect( keys[drawWhiteKey].rect.left+5, keys[drawWhiteKey].rect.top+5, keys[drawWhiteKey].rect.right-5, 
-					keys[drawWhiteKey].rect.bottom-5, paint);
+			keys[drawWhiteKey].draw(canvas);
 		}
 		
 		for( int drawBlackKey = 8; drawBlackKey <= 13; ++drawBlackKey ) { //draw black keys
-			paint.setColor(Color.BLACK);
-			canvas.drawRect( keys[drawBlackKey].rect.left, keys[drawBlackKey].rect.top, keys[drawBlackKey].rect.right, 
-					keys[drawBlackKey].rect.bottom, paint);
+			keys[drawBlackKey].draw(canvas);
 		}
 	}
 }

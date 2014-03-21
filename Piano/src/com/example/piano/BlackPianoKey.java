@@ -1,5 +1,8 @@
 package com.example.piano;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+
 public class BlackPianoKey extends PianoKey {
 	
 	public  BlackPianoKey(PianoView piano, int key, float height, float width) {
@@ -27,5 +30,14 @@ public class BlackPianoKey extends PianoKey {
 			rect.left = (int)( (5 * width) + width * 0.75 );
 			rect.right = rect.left + (int)(width * 0.6);
 		}
+	}
+	
+	public void draw( Canvas canvas ) {
+		if( pressed ) {
+			fillpaint.setColor(Color.GREEN);
+		} else {
+			fillpaint.setColor(Color.BLACK);
+		}
+		canvas.drawRect(rect,fillpaint);
 	}
 }
