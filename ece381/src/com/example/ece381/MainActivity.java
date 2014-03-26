@@ -71,7 +71,8 @@ public class MainActivity extends Activity {
 		// and executes the code in it.
 		
 		new SocketConnect().execute((Void) null);
-
+		Intent intent = new Intent(MainActivity.this, PianoActivity.class);
+		startActivity(intent);
 	}
 
 	//  Called when the user wants to send a message
@@ -208,11 +209,11 @@ public class MainActivity extends Activity {
 						in.read(buf);
 
 						final String s = new String(buf, 0, bytes_avail, "US-ASCII");
-						if (s.contains("connect")){
-							de2Connected = true;
-							Intent intent = new Intent(MainActivity.this, PianoActivity.class);
-							startActivity(intent);
-						}
+//						if (s.contains("connect")){
+//							de2Connected = true;
+//							Intent intent = new Intent(MainActivity.this, PianoActivity.class);
+//							startActivity(intent);
+//						}
 						// As explained in the tutorials, the GUI can not be
 						// updated in an asyncrhonous task.  So, update the GUI
 						// using the UI thread.

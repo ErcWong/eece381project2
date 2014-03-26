@@ -20,4 +20,8 @@ public abstract class PianoKey {
 	}
 	
 	abstract public void draw(Canvas canvas);
+	
+	public boolean contains(int x, int y) {
+	    return rect.contains(x, y);
+	}
 }
