@@ -70,18 +70,18 @@ public class PianoView extends View {
 	    		int x = (int)event.getX();
 	            int y = (int)event.getY();
 	            float pressure = event.getPressure();
-	            redraw |= onTouchDown(pointerId, x, y, pressure);
+	             onTouchDown(pointerId, x, y, pressure);
 	    	}
-	    case MotionEvent.ACTION_POINTER_DOWN: {
-	    	if( pointerId < FINGERS && pointerId >= 0 ) {
-	    		int x = (int)event.getX(pointerIndex);
-	            int y = (int)event.getY(pointerIndex);
-	            float pressure = event.getPressure(pointerIndex);
-	            redraw |= onTouchDown(pointerId, x, y, pressure);
-	      	}
-	    	//break;
-	    }
-	    case MotionEvent.ACTION_MOVE: { // a pointer was moved
+//	    case MotionEvent.ACTION_POINTER_DOWN: {
+//	    	if( pointerId < FINGERS && pointerId >= 0 ) {
+//	    		int x = (int)event.getX(pointerIndex);
+//	            int y = (int)event.getY(pointerIndex);
+//	            float pressure = event.getPressure(pointerIndex);
+//	            redraw |= onTouchDown(pointerId, x, y, pressure);
+//	      	}
+//	    	//break;
+//	    }
+//	    case MotionEvent.ACTION_MOVE: { // a pointer was moved
 //	    	if( pointerIndex >= 0 ) {
 //	    		int x = (int)event.getX(pointerIndex);
 //	            int y = (int)event.getY(pointerIndex);
@@ -89,21 +89,21 @@ public class PianoView extends View {
 //	            //redraw function here
 //	    	}
 	    	//break;
-	    }
+//	    }
 	    case MotionEvent.ACTION_UP: {
-//	    	if (pointerId < FINGERS) {
-//	    		redraw |= onTouchUp(pointerId);
-//	        }
+	    	if (pointerId < FINGERS) {
+	    		 onTouchUp(pointerId);
+	        }
 	    }
-	    case MotionEvent.ACTION_POINTER_UP: {
-//	    	if (pointerId < FINGERS) {
-//	    		redraw |= onTouchUp(pointerId);
-//	        }
+//	    case MotionEvent.ACTION_POINTER_UP: {
+////	    	if (pointerId < FINGERS) {
+////	    		redraw |= onTouchUp(pointerId);
+////	        }
+//	    }
 	    }
-	    }
-	    if( redraw ) {
+	    //if( redraw ) {
 	    	invalidate();
-	    }
+	    //}
 
 	    return true;
 	} 
