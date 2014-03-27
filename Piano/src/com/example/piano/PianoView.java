@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.Display;
@@ -60,79 +59,64 @@ public class PianoView extends View {
 	    // get pointer ID
 	    int pointerId = event.getPointerId(pointerIndex);
 	    // get masked (not specific to a pointer) action
-	    int maskedAction = event.getActionMasked();
+	    int action = event.getActionMasked();
 	    boolean redraw = false;
 
-	    switch (maskedAction) {
-
+	    switch (action) {
 	    case MotionEvent.ACTION_DOWN:
+	    case MotionEvent.ACTION_POINTER_DOWN:
 	    	if( pointerId < FINGERS ) {
 	    		int x = (int)event.getX();
 	            int y = (int)event.getY();
 	            float pressure = event.getPressure();
 	             onTouchDown(pointerId, x, y, pressure);
 	    	}
-//	    case MotionEvent.ACTION_POINTER_DOWN: {
-//	    	if( pointerId < FINGERS && pointerId >= 0 ) {
-//	    		int x = (int)event.getX(pointerIndex);
-//	            int y = (int)event.getY(pointerIndex);
-//	            float pressure = event.getPressure(pointerIndex);
-//	            redraw |= onTouchDown(pointerId, x, y, pressure);
-//	      	}
-//	    	//break;
-//	    }
-//	    case MotionEvent.ACTION_MOVE: { // a pointer was moved
-//	    	if( pointerIndex >= 0 ) {
-//	    		int x = (int)event.getX(pointerIndex);
-//	            int y = (int)event.getY(pointerIndex);
-//	            float pressure = event.getPressure(pointerIndex);
-//	            //redraw function here
-//	    	}
-	    	//break;
-//	    }
-	    case MotionEvent.ACTION_UP: {
+	    	break;
+	    case MotionEvent.ACTION_MOVE:  // a pointer was moved
+	    	for (int index = 0; index < event.getPointerCount(); ++index) {
+	    		if( pointerId >= FINGERS )
+	    			continue;
+		    	if( index >= 0 ) {
+		    		int x = (int)event.getX(index);
+		            int y = (int)event.getY(index);
+		            float pressure = event.getPressure(index);
+		            onTouchDown(pointerId, x, y, pressure);
+		    	}
+	    	}
+	    	break;
+	    case MotionEvent.ACTION_UP:
+	    case MotionEvent.ACTION_POINTER_UP: 
 	    	if (pointerId < FINGERS) {
 	    		 onTouchUp(pointerId);
 	        }
+	    	break;
 	    }
-//	    case MotionEvent.ACTION_POINTER_UP: {
-////	    	if (pointerId < FINGERS) {
-////	    		redraw |= onTouchUp(pointerId);
-////	        }
-//	    }
-	    }
-	    //if( redraw ) {
+	 
 	    	invalidate();
-	    //}
 
 	    return true;
 	} 
 	
-	 protected boolean onTouchDown(int finger, int x, int y, float pressure) {
+	 protected void onTouchDown(int finger, int x, int y, float pressure) {
 		    // Look through keys from top to bottom, and set the first one found as down, the rest as up.
 		    boolean redraw = false;
-		    for (int i = keys.length - 1; i >= 0; --i) {
+		    for (int i = 0; i <= 13; ++i) {
 		        if (keys[i].contains(x, y)) {
 		            // This key is being touched.
 		        	keys[i].pressed = true;
-		            redraw |= keys[i].pressed;
 		        } else {
 		            // This key is not being touched.
 		        	keys[i].pressed = false;
-		            redraw |= keys[i].pressed;
 		        }
 		    }
-		    return redraw;
 	 }
 	 
-	 protected boolean onTouchUp(int finger) {
+	 protected void onTouchUp(int finger) {
 	    // Set all keys as up.
 	    boolean redraw = false;
-	    for (int i = 0; i < keys.length; ++i) {
+	    for (int i = 0; i <= 13; ++i) {
 	    	keys[i].pressed = false;
-            redraw |= keys[i].pressed;
 	    }
-	    return redraw;
 	}
 
 }
