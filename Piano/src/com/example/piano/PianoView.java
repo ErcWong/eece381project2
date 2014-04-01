@@ -100,10 +100,11 @@ public class PianoView extends View {
 	 protected void onTouchDown(int finger, int x, int y, float pressure) {
 		    // Look through keys from top to bottom, and set the first one found as down, the rest as up.
 		    boolean redraw = false;
-		    for (int i = 0; i <= 13; ++i) {
+		    for (int i = 13; i >= 0; --i) {
 		        if (keys[i].contains(x, y)) {
 		            // This key is being touched.
 		        	keys[i].pressed = true;
+		        	break;
 		        } else {
 		            // This key is not being touched.
 		        	keys[i].pressed = false;
