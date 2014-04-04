@@ -1,10 +1,11 @@
 package com.example.ece381;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,8 +15,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class PianoActivity extends ActionBarActivity {
-	PianoView vw;
+public class PianoActivity extends Activity {
+	PianoView piano_view;
 	private static SoundPool soundPool;
 	private static int width;
 	private static int height;
@@ -26,8 +27,8 @@ public class PianoActivity extends ActionBarActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		vw = new PianoView(this);
-		setContentView(vw);
+		piano_view = new PianoView(this);
+		setContentView(piano_view);
 
 		// if (savedInstanceState == null) {
 		// getSupportFragmentManager().beginTransaction()

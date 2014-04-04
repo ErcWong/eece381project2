@@ -3,8 +3,6 @@ package com.example.ece381;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.example.drawutil.PianoKeyScreen;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;

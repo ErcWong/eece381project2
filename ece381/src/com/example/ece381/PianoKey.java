@@ -1,18 +1,34 @@
 package com.example.ece381;
 
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 
 
-public class PianoKey {
+public abstract class PianoKey {
 	private int keyid;
 	private boolean played = false;
 	static boolean loaded = false;
 	private int keyrate = 1;
 	protected PianoView piano_;
+	protected Paint fillpaint, strokepaint;
+	protected boolean pressed = false;
 	
-	private Rect rect;
+	protected Rect rect;
 
+	
+	public PianoKey(PianoView paino) {
+		rect = new Rect();
+		fillpaint = new Paint();
+		strokepaint = new Paint();
+	}
+	
+	abstract public void draw(Canvas canvas);
+	
+	public boolean contains(int x, int y) {
+	    return rect.contains(x, y);
+	}
 
 	public int getKeyid() {
 		return keyid;
