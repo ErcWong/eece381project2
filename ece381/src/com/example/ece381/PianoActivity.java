@@ -27,7 +27,7 @@ public class PianoActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		piano_view = new PianoView(this);
+		piano_view = new PianoView(this, null);
 		setContentView(piano_view);
 
 		// if (savedInstanceState == null) {
