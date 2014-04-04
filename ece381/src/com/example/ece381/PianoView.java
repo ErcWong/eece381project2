@@ -3,11 +3,19 @@ package com.example.ece381;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.piano.BlackPianoKey;
+import com.example.piano.PianoKey;
+import com.example.piano.WhitePianoKey;
+
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,20 +36,41 @@ public class PianoView extends View implements View.OnLongClickListener,
 	static PianoKey keyf = new PianoKey();
 	static PianoKey keyg = new PianoKey();
 	static PianoKey keygb = new PianoKey();
+	
+	private PianoKey[] keys;
+	protected float scale;
+	public float screenKeyWidth, screenKeyHeight;
+    protected static final int FINGERS = 5; // The number of simultaneous fingers
 
-	public PianoView(Context context) {
-		super(context);
+	public PianoView(Context context, AttributeSet attribute_set) {
+		super(context, attribute_set);
 		
 		eventDataMap = new HashMap<Integer, EventData>();
 		
 		this.setOnLongClickListener(this);
 		this.setOnClickListener(this);
+		
+		keys = new PianoKey[20];
+	    
+	    Point point = new Point();
+	    Display display = ((Activity) getContext()).getWindowManager().getDefaultDisplay(); 
+	    display.getSize( point );
+	    screenKeyWidth = (float)(point.x / 7);
+	    screenKeyHeight = (float)(point.y * 0.3333333);
+	    
+	    int key_total = 0;
+	    for( int note = 0; note <= 7; ++note ) { // create white keys
+	    	keys[key_total++] = new WhitePianoKey( this, note, screenKeyHeight, screenKeyWidth );
+	   }
+	    for( int note = 0; note <= 5; ++note ) { // create black keys
+	    	keys[key_total++] = new BlackPianoKey( this, note, screenKeyHeight, screenKeyWidth );	    
+	    }
 
 	}
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		for (EventData event : eventDataMap.values()) {
+		/*for (EventData event : eventDataMap.values()) {
 			paint.setColor(Color.WHITE);
 			paint.setStyle(Paint.Style.FILL);
 			canvas.drawCircle(event.x, event.y, 30, paint);
@@ -50,6 +79,15 @@ public class PianoView extends View implements View.OnLongClickListener,
 				paint.setColor(Color.RED);
 			}
 			canvas.drawCircle(event.x, event.y, 60, paint);
+		}*/
+		canvas.drawColor(Color.WHITE);
+		
+		for( int drawWhiteKey = 0; drawWhiteKey <= 7; ++drawWhiteKey ) {  // draw white keys
+			keys[drawWhiteKey].draw(canvas);
+		}
+		
+		for( int drawBlackKey = 8; drawBlackKey <= 13; ++drawBlackKey ) { //draw black keys
+			keys[drawBlackKey].draw(canvas);
 		}
 	}
 
