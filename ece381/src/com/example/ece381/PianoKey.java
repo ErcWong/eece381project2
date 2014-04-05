@@ -17,7 +17,7 @@ public abstract class PianoKey {
 	
 	protected Rect rect;
 
-	
+
 	public PianoKey(PianoView paino) {
 		rect = new Rect();
 		fillpaint = new Paint();

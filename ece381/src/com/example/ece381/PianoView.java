@@ -3,10 +3,6 @@ package com.example.ece381;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.example.piano.BlackPianoKey;
-import com.example.piano.PianoKey;
-import com.example.piano.WhitePianoKey;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -81,7 +77,7 @@ public class PianoView extends View implements View.OnLongClickListener,
 			canvas.drawCircle(event.x, event.y, 60, paint);
 		}*/
 		canvas.drawColor(Color.WHITE);
-		
+		//draw keys
 		for( int drawWhiteKey = 0; drawWhiteKey <= 7; ++drawWhiteKey ) {  // draw white keys
 			keys[drawWhiteKey].draw(canvas);
 		}
