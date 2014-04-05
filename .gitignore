@@ -1,0 +1,19 @@
+# Generic Files
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+*Thumbs.db
+
+# Java Files
+*.class
+.classpath
+
+.settings/
+bin/
+
+# Package Files #
+*.jar
+*.war
+*.ear
