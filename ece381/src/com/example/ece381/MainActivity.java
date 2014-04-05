@@ -43,6 +43,8 @@ public class MainActivity extends Activity {
 		TCPReadTimerTask tcp_task = new TCPReadTimerTask();
 		Timer tcp_timer = new Timer();
 		tcp_timer.schedule(tcp_task, 3000, 500);
+		Intent intent = new Intent(MainActivity.this, PianoActivity.class);
+		startActivity(intent);
 	}
 
 	@Override
@@ -71,8 +73,6 @@ public class MainActivity extends Activity {
 		// and executes the code in it.
 		
 		new SocketConnect().execute((Void) null);
-		Intent intent = new Intent(MainActivity.this, PianoActivity.class);
-		startActivity(intent);
 	}
 
 	//  Called when the user wants to send a message

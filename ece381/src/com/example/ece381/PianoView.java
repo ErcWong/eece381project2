@@ -3,12 +3,11 @@ package com.example.ece381;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.example.drawutil.PianoKeyScreen;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -18,41 +17,60 @@ import android.widget.Toast;
 public class PianoView extends View implements View.OnLongClickListener,
 		View.OnClickListener {
 
-	static PianoKey keya = new PianoKey();
-	static PianoKey keyab = new PianoKey();
-	static PianoKey keyb = new PianoKey();
-	static PianoKey keybb = new PianoKey();
-	static PianoKey keyc = new PianoKey();
-	static PianoKey keyd = new PianoKey();
-	static PianoKey keydb = new PianoKey();
-	static PianoKey keye = new PianoKey();
-	static PianoKey keyeb = new PianoKey();
-	static PianoKey keyf = new PianoKey();
-	static PianoKey keyg = new PianoKey();
-	static PianoKey keygb = new PianoKey();
+	private final String TAG = "PianoView";
+	private int offset = 50;
 
 	public PianoView(Context context) {
 		super(context);
-		
+
 		eventDataMap = new HashMap<Integer, EventData>();
-		
+
 		this.setOnLongClickListener(this);
 		this.setOnClickListener(this);
-
 	}
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		for (EventData event : eventDataMap.values()) {
-			paint.setColor(Color.WHITE);
-			paint.setStyle(Paint.Style.FILL);
-			canvas.drawCircle(event.x, event.y, 30, paint);
-			paint.setStyle(Paint.Style.STROKE);
-			if (event.pressure <= 0.001) {
-				paint.setColor(Color.RED);
+		paint.setColor(Color.WHITE);
+		paint.setStyle(Paint.Style.FILL);
+		canvas.drawPaint(paint);
+		for (PianoKey key : PianoActivity.pianoKeyList) {
+			paint.setColor(Color.BLACK);
+			if (key.getKeyName().contains("b")) {
+				paint.setStyle(Paint.Style.FILL);
+			} else {
+				paint.setStyle(Paint.Style.STROKE);
+				paint.setStrokeWidth(10);
 			}
-			canvas.drawCircle(event.x, event.y, 60, paint);
+			// canvas.drawRect(key.getKeyShape().getRectLeft(), paint);
+			// canvas.drawRect(key.getKeyShape().getRectRight(), paint);
+			canvas.drawRect(key.getRect(), paint);
+
+			paint.setStrokeWidth(2);
+			paint.setStyle(Paint.Style.FILL);
+			// paint white letters for flats
+			if (key.getKeyName().contains("b")) {
+				paint.setColor(Color.WHITE);
+				System.out.print(key.getKeyName());
+			} else {
+				paint.setColor(Color.BLACK);
+			}
+
+			canvas.drawText(key.getKeyName(), key.getRect().centerX() - offset,
+					key.getRect().centerY(), paint);
+			canvas.drawText(String.valueOf(key.isPlayed()), key.getRect()
+					.centerX(), key.getRect().centerY(), paint);
 		}
+		// for (EventData event : eventDataMap.values()) {
+		// paint.setColor(Color.WHITE);
+		// paint.setStyle(Paint.Style.FILL);
+		// canvas.drawCircle(event.x, event.y, 30, paint);
+		// paint.setStyle(Paint.Style.STROKE);
+		// if (event.pressure <= 0.001) {
+		// paint.setColor(Color.RED);
+		// }
+		// canvas.drawCircle(event.x, event.y, 60, paint);
+		// }
 	}
 
 	@Override
@@ -77,23 +95,22 @@ public class PianoView extends View implements View.OnLongClickListener,
 			EventData eventData = new EventData();
 			eventData.x = event.getX(pointerIndex);
 			eventData.y = event.getY(pointerIndex);
-			eventData.pressure = event.getPressure(pointerIndex);
-			eventDataMap.put(new Integer(pointerId), eventData);
+			eventDataMap.put(Integer.valueOf(pointerId), eventData);
 			if (returnValueOnActionDown) {
 				result = returnValueOnActionDown;
 			}
-			playSound(eventData.x, eventData.y);
+			keyPress((int) eventData.x, (int) eventData.y);
 			break;
 		case MotionEvent.ACTION_MOVE:
 			for (int i = 0; i < event.getPointerCount(); i++) {
 				int curPointerId = event.getPointerId(i);
-				if (eventDataMap.containsKey(new Integer(curPointerId))) {
-					EventData moveEventData = eventDataMap.get(new Integer(
-							curPointerId));
+				if (eventDataMap.containsKey(Integer.valueOf(curPointerId))) {
+					EventData moveEventData = eventDataMap.get(Integer
+							.valueOf(curPointerId));
 					moveEventData.x = event.getX(i);
 					moveEventData.y = event.getY(i);
-					moveEventData.pressure = event.getPressure(i);
-					playSound(moveEventData.x, moveEventData.y);
+					keyPress((int) moveEventData.x, (int) moveEventData.y);
+					keyLetGo((int) moveEventData.x, (int) moveEventData.y);
 				}
 			}
 			if (returnValueOnActionMove) {
@@ -102,7 +119,10 @@ public class PianoView extends View implements View.OnLongClickListener,
 			break;
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_POINTER_UP:
-			eventDataMap.remove(new Integer(pointerId));
+			int x = (int) event.getX(pointerIndex);
+			int y = (int) event.getY(pointerIndex);
+			keyLetGo(x, y);
+			eventDataMap.remove(Integer.valueOf(pointerId));
 			if (returnValueOnActionUp) {
 				result = returnValueOnActionUp;
 			}
@@ -111,94 +131,111 @@ public class PianoView extends View implements View.OnLongClickListener,
 			break;
 		}
 		invalidate();
+		dumpEvent(event);
 		return result;
 	}
 
 	@Override
 	public void onClick(View v) {
-		Toast msg = Toast.makeText(PianoView.this.getContext(), "onClick",
-				Toast.LENGTH_SHORT);
-		msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2,
-				msg.getYOffset() / 2);
-		msg.show();
+		// Toast msg = Toast.makeText(PianoView.this.getContext(), "onClick",
+		// Toast.LENGTH_SHORT);
+		// msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2,
+		// msg.getYOffset() / 2);
+		// msg.show();
 	}
 
 	@Override
 	public boolean onLongClick(View v) {
-		Toast msg = Toast.makeText(PianoView.this.getContext(), "onLongClick",
-				Toast.LENGTH_SHORT);
-		msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2,
-				msg.getYOffset() / 2);
-		msg.show();
+		// Toast msg = Toast.makeText(PianoView.this.getContext(),
+		// "onLongClick",
+		// Toast.LENGTH_SHORT);
+		// msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2,
+		// msg.getYOffset() / 2);
+		// msg.show();
 		return returnValueOnLongClick;
 	}
 
-	public void playSound(float x, float y) {
-		int i = 0;
-		int height = PianoActivity.getHeight();
-		int width = PianoActivity.getWidth();
-		for (i = 0; i < 12; i++) {
-			if (y < (height / 7) * (i + 1) & y > (height / 7) * i) {
-				if (PianoKey.loaded) {
-					switch (i) {
-					case 0:
-						PianoActivity.getSoundPool().play(keyc.getKeyid(), 1,
-								1, 0, 0, keyc.getKeyrate());
-						break;
-					case 1:
-						PianoActivity.getSoundPool().play(keyd.getKeyid(), 1,
-								1, 0, 0, keyd.getKeyrate());
-						break;
-					case 2:
-						PianoActivity.getSoundPool().play(keye.getKeyid(), 1,
-								1, 0, 0, keye.getKeyrate());
-						break;
-					case 3:
-						PianoActivity.getSoundPool().play(keyf.getKeyid(), 1,
-								1, 0, 0, keyf.getKeyrate());
-						break;
-					case 4:
-						PianoActivity.getSoundPool().play(keyg.getKeyid(), 1,
-								1, 0, 0, keyg.getKeyrate());
-						break;
-					case 5:
-						PianoActivity.getSoundPool().play(keya.getKeyid(), 1,
-								1, 0, 0, keya.getKeyrate());
-						break;
-					case 6:
-						PianoActivity.getSoundPool().play(keyb.getKeyid(), 1,
-								1, 0, 0, keyb.getKeyrate());
-						break;
-					}
-				}
-			} else if (y < (height / 12) * (i + 1) & y > (height / 12) * i
-					& x > 3 * width / 4) {
-				if (PianoKey.loaded) {
-					switch (i) {
-					case 1:
-						PianoActivity.getSoundPool().play(keydb.getKeyid(), 1,
-								1, 0, 0, keydb.getKeyrate());
-						break;
-					case 3:
-						PianoActivity.getSoundPool().play(keyeb.getKeyid(), 1,
-								1, 0, 0, keyeb.getKeyrate());
-						break;
-					case 5:
-						PianoActivity.getSoundPool().play(keygb.getKeyid(), 1,
-								1, 0, 0, keygb.getKeyrate());
-						break;
-					case 8:
-						PianoActivity.getSoundPool().play(keyab.getKeyid(), 1,
-								1, 0, 0, keyab.getKeyrate());
-						break;
-					case 10:
-						PianoActivity.getSoundPool().play(keybb.getKeyid(), 1,
-								1, 0, 0, keybb.getKeyrate());
-						break;
-					}
-				}
+	public void keyPress(int x, int y) {
+		for (PianoKey key : PianoActivity.pianoKeyList) {
+			if (key.getKeyShape().contains(x, y) && !key.isPlayed()) {
+				toastKey(key);
+				playSound(key);
+				key.setPlayed(true);
 			}
 		}
+		// for (i = 0; i < 12; i++) {
+		// if (y < (height / 7) * (i + 1) & y > (height / 7) * i) {
+		// } else if (y < (height / 12) * (i + 1) & y > (height / 12) * i
+		// & x > 3 * width / 4) {
+	}
+
+	public void keyMove(int x, int y) {
+		for (PianoKey key : PianoActivity.pianoKeyList) {
+			if (key.getKeyShape().contains(x, y) && key.isPlayed()) {
+				Toast msg = Toast.makeText(PianoView.this.getContext(),
+						(key.getKeyName() + "Let go"), Toast.LENGTH_SHORT);
+				msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2,
+						msg.getYOffset() / 2);
+				msg.show();
+				key.setPlayed(false);
+			}
+		}
+	}
+
+	// Reset key played boolean to false
+	public void keyLetGo(int x, int y) {
+		for (PianoKey key : PianoActivity.pianoKeyList) {
+			if (key.getKeyShape().contains(x, y) && key.isPlayed()) {
+				Toast msg = Toast.makeText(PianoView.this.getContext(),
+						(key.getKeyName() + "Let go"), Toast.LENGTH_SHORT);
+				msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2,
+						msg.getYOffset() / 2);
+				msg.show();
+				key.setPlayed(false);
+			}
+		}
+	}
+
+	// Plays the sound
+	public void playSound(PianoKey key) {
+		PianoActivity.getSoundPool().play(key.getKeyid(), 1, 1, 0, 0,
+				key.getKeyrate());
+	}
+
+	public void toastKey(PianoKey key) {
+		Toast msg = Toast.makeText(PianoView.this.getContext(),
+				key.getKeyName(), Toast.LENGTH_SHORT);
+		msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2,
+				msg.getYOffset() / 2);
+		msg.show();
+	}
+
+	@SuppressWarnings("deprecation")
+	private void dumpEvent(MotionEvent event) {
+		String names[] = { "DOWN", "UP", "MOVE", "CANCEL", "OUTSIDE",
+				"POINTER_DOWN", "POINTER_UP" };
+		StringBuilder sb = new StringBuilder();
+		int action = event.getAction();
+		int actionCode = action & MotionEvent.ACTION_MASK;
+		sb.append("event Action_").append(names[actionCode]);
+		if (actionCode == MotionEvent.ACTION_POINTER_DOWN
+				|| actionCode == MotionEvent.ACTION_POINTER_UP) {
+			sb.append("pid").append(
+					action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
+			sb.append(")");
+		}
+		sb.append("[");
+		for (int i = 0; i < event.getPointerCount(); i++) {
+			sb.append("#").append(i);
+			sb.append("(pid ").append(event.getPointerId(i));
+			sb.append(")=").append((int) event.getX(i));
+			sb.append(",").append((int) event.getY(i));
+			if (i + 1 < event.getPointerCount()) {
+				sb.append(";");
+			}
+		}
+		sb.append("]");
+		Log.d(TAG, sb.toString());
 	}
 
 	public float getScreenSize(float lengthInMm) {

@@ -1,25 +1,45 @@
 package com.example.ece381;
 
+import com.example.drawutil.Polygon;
 
 import android.graphics.Rect;
 
-
 public class PianoKey {
-	private int keyid;
+	private String keyName;
+	private int keyID;
 	private boolean played = false;
-	static boolean loaded = false;
-	private int keyrate = 1;
-	protected PianoView piano_;
-	
+	private int keyRate;
 	private Rect rect;
+	private String prsntKey;
+	private Polygon keyShape;
 
+	public static boolean loaded = false;
+
+	public PianoKey(String keyName, int keyID, boolean played, int keyRate,
+			Rect rect, Rect rectLeft, Rect rectRight) {
+		this.keyName = keyName;
+		this.keyID = keyID;
+		this.played = played;
+		this.keyRate = keyRate;
+		this.rect = rect;
+		this.prsntKey = keyName;
+		this.keyShape = new Polygon(rectLeft, rectRight);
+	}
+
+	public String getKeyName() {
+		return keyName;
+	}
+
+	public void setKeyName(String keyName) {
+		this.keyName = keyName;
+	}
 
 	public int getKeyid() {
-		return keyid;
+		return keyID;
 	}
 
 	public void setKeyid(int keyid) {
-		this.keyid = keyid;
+		this.keyID = keyid;
 	}
 
 	public boolean isPlayed() {
@@ -31,11 +51,11 @@ public class PianoKey {
 	}
 
 	public int getKeyrate() {
-		return keyrate;
+		return keyRate;
 	}
 
-	public void setKeyrate(int keyrate) {
-		this.keyrate = keyrate;
+	public void setKeyrate(int keyRate) {
+		this.keyRate = keyRate;
 	}
 
 	public Rect getRect() {
@@ -44,6 +64,22 @@ public class PianoKey {
 
 	public void setRect(Rect rect) {
 		this.rect = rect;
+	}
+
+	public String getPresentKey() {
+		return prsntKey;
+	}
+
+	public void setPresentKey(String prsntKey) {
+		this.prsntKey = prsntKey;
+	}
+
+	public Polygon getKeyShape() {
+		return keyShape;
+	}
+
+	public void setKeyShape(Polygon keyShape) {
+		this.keyShape = keyShape;
 	}
 
 }
