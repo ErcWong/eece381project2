@@ -9,7 +9,6 @@ import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
