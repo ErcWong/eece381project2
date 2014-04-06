@@ -1031,13 +1031,14 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f060016;
         public static final int action_menu_presenter=0x7f060017;
         public static final int action_mode_close_button=0x7f060024;
-        public static final int action_settings=0x7f060046;
+        public static final int action_settings=0x7f060047;
         public static final int activity_chooser_view_content=0x7f060025;
         public static final int always=0x7f06000b;
         public static final int beginning=0x7f060011;
+        public static final int button1=0x7f060044;
         public static final int checkbox=0x7f06002d;
         public static final int collapseActionView=0x7f06000d;
-        public static final int container=0x7f060044;
+        public static final int container=0x7f060045;
         public static final int default_activity_button=0x7f060028;
         public static final int dialog=0x7f06000e;
         public static final int disableHome=0x7f060008;
@@ -1058,7 +1059,7 @@ containing a value of this type.
         public static final int ip4=0x7f06003f;
         public static final int listMode=0x7f060001;
         public static final int list_item=0x7f060029;
-        public static final int menu_settings=0x7f060045;
+        public static final int menu_settings=0x7f060046;
         public static final int middle=0x7f060012;
         public static final int never=0x7f060009;
         public static final int none=0x7f060010;
@@ -1213,6 +1214,7 @@ containing a value of this type.
         public static final int label_myip=0x7f0b0016;
         public static final int label_port=0x7f0b0010;
         public static final int menu_settings=0x7f0b0014;
+        public static final int openKeyboard=0x7f0b001d;
         public static final int play=0x7f0b0017;
         public static final int playsong=0x7f0b000f;
         public static final int printsong=0x7f0b0011;
