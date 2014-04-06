@@ -1,4 +1,5 @@
 package com.example.ece381;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,13 +19,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+	private static boolean de2Connected;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		
+		setDe2Connected(false);
 		// This call will result in better error messages if you
 		// try to do things in the wrong thread.
-		
+
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 				.detectDiskReads().detectDiskWrites().detectNetwork()
 				.penaltyLog().build());
@@ -37,14 +39,14 @@ public class MainActivity extends Activity {
 		et = (EditText) findViewById(R.id.error_message_box);
 		et.setKeyListener(null);
 
-		// Set up a timer task.  We will use the timer to check the
+		// Set up a timer task. We will use the timer to check the
 		// input queue every 500 ms
-		
+
 		TCPReadTimerTask tcp_task = new TCPReadTimerTask();
 		Timer tcp_timer = new Timer();
 		tcp_timer.schedule(tcp_task, 3000, 500);
-		Intent intent = new Intent(MainActivity.this, PianoActivity.class);
-		startActivity(intent);
+		// Intent intent = new Intent(MainActivity.this, PianoActivity.class);
+		// startActivity(intent);
 	}
 
 	@Override
@@ -53,47 +55,53 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	// Open keyboard without connecting
+	public void openKeyboard(View view) {
+		Intent intent = new Intent(MainActivity.this, PianoActivity.class);
+		startActivity(intent);
+	}
+
 	// Route called when the user presses "connect"
-	
+
 	public void openSocket(View view) {
 		MyApplication app = (MyApplication) getApplication();
 		TextView msgbox = (TextView) findViewById(R.id.error_message_box);
 
-		// Make sure the socket is not already opened 
-		
+		// Make sure the socket is not already opened
+
 		if (app.sock != null && app.sock.isConnected() && !app.sock.isClosed()) {
 			msgbox.setText("Socket already open");
 			return;
 		} else {
 			msgbox.setText("Not connected");
 		}
-		
-		// open the socket.  SocketConnect is a new subclass
-	    // (defined below).  This creates an instance of the subclass
+
+		// open the socket. SocketConnect is a new subclass
+		// (defined below). This creates an instance of the subclass
 		// and executes the code in it.
-		
+
 		new SocketConnect().execute((Void) null);
 	}
 
-	//  Called when the user wants to send a message
-	
+	// Called when the user wants to send a message
+
 	public void sendMessage(View view) {
 		MyApplication app = (MyApplication) getApplication();
-		
+
 		// Get the message from the box
-		
+
 		EditText et = (EditText) findViewById(R.id.MessageText);
 		String msg = et.getText().toString();
 
-		// Create an array of bytes.  First byte will be the
+		// Create an array of bytes. First byte will be the
 		// message length, and the next ones will be the message
-		
+
 		byte buf[] = new byte[msg.length() + 1];
-		buf[0] = (byte) msg.length(); 
+		buf[0] = (byte) msg.length();
 		System.arraycopy(msg.getBytes(), 0, buf, 1, msg.length());
 
 		// Now send through the output stream of the socket
-		
+
 		OutputStream out;
 		try {
 			out = app.sock.getOutputStream();
@@ -108,7 +116,7 @@ public class MainActivity extends Activity {
 	}
 
 	// Called when the user closes a socket
-	
+
 	public void closeSocket(View view) {
 		MyApplication app = (MyApplication) getApplication();
 		Socket s = app.sock;
@@ -121,7 +129,7 @@ public class MainActivity extends Activity {
 	}
 
 	// Construct an IP address from the four boxes
-	
+
 	public String getConnectToIP() {
 		String addr = "";
 		EditText text_ip;
@@ -137,7 +145,7 @@ public class MainActivity extends Activity {
 	}
 
 	// Gets the Port from the appropriate field.
-	
+
 	public Integer getConnectToPort() {
 		Integer port;
 		EditText text_port;
@@ -148,17 +156,24 @@ public class MainActivity extends Activity {
 		return port;
 	}
 
-
-    // This is the Socket Connect asynchronous thread.  Opening a socket
-	// has to be done in an Asynchronous thread in Android.  Be sure you
+	// This is the Socket Connect asynchronous thread. Opening a socket
+	// has to be done in an Asynchronous thread in Android. Be sure you
 	// have done the Asynchronous Tread tutorial before trying to understand
 	// this code.
-	
+
+	public static boolean isDe2Connected() {
+		return de2Connected;
+	}
+
+	public static void setDe2Connected(boolean de2Connected) {
+		MainActivity.de2Connected = de2Connected;
+	}
+
 	public class SocketConnect extends AsyncTask<Void, Void, Socket> {
 
-		// The main parcel of work for this thread.  Opens a socket
+		// The main parcel of work for this thread. Opens a socket
 		// to connect to the specified IP.
-		
+
 		protected Socket doInBackground(Void... voids) {
 			Socket s = null;
 			String ip = getConnectToIP();
@@ -174,10 +189,10 @@ public class MainActivity extends Activity {
 			return s;
 		}
 
-		// After executing the doInBackground method, this is 
+		// After executing the doInBackground method, this is
 		// automatically called, in the UI (main) thread to store
 		// the socket in this app's persistent storage
-		
+
 		protected void onPostExecute(Socket s) {
 			MyApplication myApp = (MyApplication) MainActivity.this
 					.getApplication();
@@ -185,46 +200,49 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	// This is a timer Task.  Be sure to work through the tutorials
+	// This is a timer Task. Be sure to work through the tutorials
 	// on Timer Tasks before trying to understand this code.
-	
+
 	public class TCPReadTimerTask extends TimerTask {
 		public boolean de2Connected = false;
+
 		public void run() {
 			MyApplication app = (MyApplication) getApplication();
 			if (app.sock != null && app.sock.isConnected()
 					&& !app.sock.isClosed()) {
-				
+
 				try {
 					InputStream in = app.sock.getInputStream();
 
 					// See if any bytes are available from the Middleman
-					
+
 					int bytes_avail = in.available();
 					if (bytes_avail > 0) {
-						
+
 						// If so, read them in and create a sring
-						
+
 						byte buf[] = new byte[bytes_avail];
 						in.read(buf);
 
-						final String s = new String(buf, 0, bytes_avail, "US-ASCII");
-//						if (s.contains("connect")){
-//							de2Connected = true;
-//							Intent intent = new Intent(MainActivity.this, PianoActivity.class);
-//							startActivity(intent);
-//						}
+						final String s = new String(buf, 0, bytes_avail,
+								"US-ASCII");
+						if (s.contains("connect")) {
+							setDe2Connected(true);
+							Intent intent = new Intent(MainActivity.this,
+									PianoActivity.class);
+							startActivity(intent);
+						}
 						// As explained in the tutorials, the GUI can not be
-						// updated in an asyncrhonous task.  So, update the GUI
+						// updated in an asyncrhonous task. So, update the GUI
 						// using the UI thread.
-						
+
 						runOnUiThread(new Runnable() {
 							public void run() {
 								EditText et = (EditText) findViewById(R.id.RecvdMessage);
 								et.setText(s);
 							}
 						});
-						
+
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -232,4 +250,5 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
+
 }
