@@ -3,6 +3,7 @@ package com.example.ece381;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActionBar;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -16,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 
 public class PianoActivity extends ActionBarActivity {
@@ -34,7 +34,7 @@ public class PianoActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+//		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		vw = new PianoView(this);
@@ -55,6 +55,9 @@ public class PianoActivity extends ActionBarActivity {
 				PianoKey.loaded = true;
 			}
 		});
+		
+		ActionBar actionbar = getActionBar();
+		actionbar.hide();
 		screenSize();
 		// White keys: C D E F G A B
 		pianoKeyList.add(new PianoKey("keyC", getSoundPool().load(this,

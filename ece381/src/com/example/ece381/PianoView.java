@@ -3,10 +3,7 @@ package com.example.ece381;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -24,7 +21,7 @@ public class PianoView extends View implements View.OnLongClickListener,
 	static Context c;
 	private final String TAG = "PianoView";
 	private int offset = 50;
-	Set<Integer> keysPlayed = new HashSet<Integer>();
+	private boolean singlePress;
 
 	public PianoView(Context context) {
 		super(context);
@@ -41,38 +38,34 @@ public class PianoView extends View implements View.OnLongClickListener,
 		canvas.drawPaint(paint);
 		for (PianoKey key : PianoActivity.pianoKeyList) {
 			paint.setColor(Color.BLACK);
+
 			if (key.getKeyName().contains("b")) {
+				if (key.isPlayed()) {
+					paint.setColor(Color.parseColor("#14C1FF"));
+				}
 				paint.setStyle(Paint.Style.FILL);
+				canvas.drawRect(key.getRect(), paint);
 			} else {
+				if (key.isPlayed()) {
+					paint.setColor(Color.parseColor("#14C1FF"));
+				} else {
+					paint.setColor(Color.WHITE);
+				}
+				paint.setStyle(Paint.Style.FILL);
+				canvas.drawRect(key.getRect(), paint);
+				paint.setColor(Color.BLACK);
 				paint.setStyle(Paint.Style.STROKE);
 				paint.setStrokeWidth(10);
+				canvas.drawRect(key.getRect(), paint);
 			}
-			canvas.drawRect(key.getRect(), paint);
 
 			paint.setStrokeWidth(2);
 			paint.setStyle(Paint.Style.FILL);
-			// paint white letters for flats
-			if (key.getKeyName().contains("b")) {
-				paint.setColor(Color.WHITE);
-			} else {
-				paint.setColor(Color.BLACK);
-			}
-
 			canvas.drawText(key.getKeyName(), key.getRect().centerX() - offset,
 					key.getRect().centerY(), paint);
 			canvas.drawText(String.valueOf(key.isPlayed()), key.getRect()
 					.centerX(), key.getRect().centerY(), paint);
 		}
-		// for (EventData event : eventDataMap.values()) {
-		// paint.setColor(Color.WHITE);
-		// paint.setStyle(Paint.Style.FILL);
-		// canvas.drawCircle(event.x, event.y, 30, paint);
-		// paint.setStyle(Paint.Style.STROKE);
-		// if (event.pressure <= 0.001) {
-		// paint.setColor(Color.RED);
-		// }
-		// canvas.drawCircle(event.x, event.y, 60, paint);
-		// }
 	}
 
 	@Override
@@ -96,6 +89,11 @@ public class PianoView extends View implements View.OnLongClickListener,
 		case MotionEvent.ACTION_DOWN:
 		case MotionEvent.ACTION_POINTER_DOWN:
 			EventData eventData = new EventData();
+			if (event.getPointerCount() > 1) {
+				setSinglePress(false);
+			} else {
+				setSinglePress(true);
+			}
 			eventData.x = event.getX(pointerIndex);
 			eventData.y = event.getY(pointerIndex);
 			eventDataMap.put(Integer.valueOf(pointerId), eventData);
@@ -103,10 +101,6 @@ public class PianoView extends View implements View.OnLongClickListener,
 				result = returnValueOnActionDown;
 			}
 			keyPress((int) eventData.x, (int) eventData.y);
-			// eventData.currentKey = keyPress((int) eventData.x,
-			// (int) eventData.y);
-			// eventData.previousKey = eventData.currentKey;
-			// System.out.println("eD key" + eventData.currentKey);
 			break;
 		case MotionEvent.ACTION_MOVE:
 			for (int i = 0; i < event.getPointerCount(); i++) {
@@ -116,8 +110,7 @@ public class PianoView extends View implements View.OnLongClickListener,
 							.valueOf(curPointerId));
 					moveEventData.x = event.getX(i);
 					moveEventData.y = event.getY(i);
-					moveEventData = keyMove(moveEventData,
-							(int) moveEventData.x, (int) moveEventData.y);
+					keyMove((int) moveEventData.x, (int) moveEventData.y);
 				}
 			}
 			if (returnValueOnActionMove) {
@@ -145,21 +138,10 @@ public class PianoView extends View implements View.OnLongClickListener,
 
 	@Override
 	public void onClick(View v) {
-		// Toast msg = Toast.makeText(PianoView.this.getContext(), "onClick",
-		// Toast.LENGTH_SHORT);
-		// msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2,
-		// msg.getYOffset() / 2);
-		// msg.show();
 	}
 
 	@Override
 	public boolean onLongClick(View v) {
-		// Toast msg = Toast.makeText(PianoView.this.getContext(),
-		// "onLongClick",
-		// Toast.LENGTH_SHORT);
-		// msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2,
-		// msg.getYOffset() / 2);
-		// msg.show();
 		return returnValueOnLongClick;
 	}
 
@@ -171,36 +153,25 @@ public class PianoView extends View implements View.OnLongClickListener,
 				// toastKey(key);
 				playSound(key);
 				key.setPlayed(true);
-				keysPlayed.add(key.getKeyid());
 				tempKey = key.getKeyid();
 				sendNote(key);
 			}
 		}
-		// printHashSet(keysPlayed);
 		return tempKey;
 	}
 
-	public EventData keyMove(EventData eD, int x, int y) {
-		// int currentKey = eD.currentKey;
-		int previousKey = eD.previousKey;
+	public EventData keyMove(int x, int y) {
 		for (PianoKey key : PianoActivity.pianoKeyList) {
-			// if (key.getKeyShape().contains(x, y)) {
-			// currentKey = key.getKeyid();
-			// keysPlayed.add(currentKey);
-			// } else if (!keysPlayed.contains(key.getKeyid())) {
-			// key.setPlayed(false);
-			// }
-			// if (key.getKeyShape().contains(x, y) && !key.isPlayed()) {
-			// playSound(key);
-			// key.setPlayed(true);
-			// // currentKey = key.getKeyid();
-			// // previousKey = key.getKeyid();
-			// } else if (key.isPlayed() &&
-			// !keysPlayed.contains(key.getKeyid())) {
-			// key.setPlayed(false);
-			// }
+			if (isSinglePress()) {
+				if (key.getKeyShape().contains(x, y) && !key.isPlayed()) {
+					playSound(key);
+					key.setPlayed(true);
+				} else if (!key.getKeyShape().contains(x, y)) {
+					key.setPlayed(false);
+				}
+			}
 		}
-		return new EventData(x, y, 0, 0);
+		return new EventData(x, y);
 	}
 
 	// Reset key played boolean to false
@@ -209,10 +180,8 @@ public class PianoView extends View implements View.OnLongClickListener,
 			if (key.getKeyShape().contains(x, y) && key.isPlayed()) {
 				// toastKey(key, " let go");
 				key.setPlayed(false);
-				keysPlayed.remove(key.getKeyid());
 			}
 		}
-		printHashSet(keysPlayed);
 	}
 
 	// Plays the sound
@@ -256,23 +225,6 @@ public class PianoView extends View implements View.OnLongClickListener,
 		}
 		sb.append("]");
 		Log.d(TAG, sb.toString());
-	}
-
-	public static void printHashSet(Set<Integer> keysPlayed) {
-		System.out.print("HashSet: ");
-		// Use an Iterator to print each element of the TreeSet.
-		Iterator<Integer> iterator = keysPlayed.iterator();
-		while (iterator.hasNext())
-			System.out.print(iterator.next() + ", ");
-		System.out.println();
-	}
-
-	public static void removeFromHashSet(Set<Integer> keysPlayed, int key) {
-		// Use an Iterator to print each element of the TreeSet.
-		Iterator<Integer> iterator = keysPlayed.iterator();
-		while (iterator.hasNext())
-			System.out.print(iterator.next() + ", ");
-		System.out.println();
 	}
 
 	public float getScreenSize(float lengthInMm) {
@@ -372,6 +324,14 @@ public class PianoView extends View implements View.OnLongClickListener,
 		return returnValueOnLongClick;
 	}
 
+	public boolean isSinglePress() {
+		return singlePress;
+	}
+
+	public void setSinglePress(boolean singlePress) {
+		this.singlePress = singlePress;
+	}
+
 	private Paint paint = new Paint();
 
 	private boolean callBaseClass = true;
@@ -387,16 +347,12 @@ public class PianoView extends View implements View.OnLongClickListener,
 		public EventData() {
 		}
 
-		public EventData(int x, int y, int currentKey, int previousKey) {
+		public EventData(int x, int y) {
 			this.x = x;
 			this.y = y;
-			this.currentKey = currentKey;
-			this.previousKey = previousKey;
 		}
 
 		public float x;
 		public float y;
-		public int currentKey;
-		public int previousKey;
 	}
 }
