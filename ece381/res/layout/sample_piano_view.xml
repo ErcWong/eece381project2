@@ -1,17 +1,15 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.example.ece381"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    tools:context=".PianoActivity" >
 
     <com.example.ece381.PianoView
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:id="@+id/PianoView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="#ccc"
         android:paddingBottom="40dp"
-        android:paddingLeft="20dp"
-        app:exampleColor="#33b5e5"
-        app:exampleDimension="24sp"
-        app:exampleDrawable="@android:drawable/ic_menu_add"
-        app:exampleString="Hello, PianoView" />
+        android:paddingLeft="20dp" />
 
-</FrameLayout>
+</RelativeLayout>

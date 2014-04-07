@@ -1,12 +1,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.ece381.PianoActivity" >
+>
 
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
+        android:showAsAction="always"
         android:title="@string/action_settings"
-        app:showAsAction="never"/>
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/playback"
+        android:icon="@drawable/ic_action_play"
+        android:showAsAction="always"
+        android:title="@string/playback"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/record"
+        android:icon="@drawable/ic_action_mic"
+        android:showAsAction="always"
+        android:title="@string/record"
+        app:showAsAction="always"/>
 
 </menu>

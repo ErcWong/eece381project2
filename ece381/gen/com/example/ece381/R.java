@@ -1014,11 +1014,14 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int ic_action_search=0x7f020057;
-        public static final int ic_launcher=0x7f020058;
+        public static final int ic_action_mic=0x7f020057;
+        public static final int ic_action_play=0x7f020058;
+        public static final int ic_action_search=0x7f020059;
+        public static final int ic_launcher=0x7f02005a;
     }
     public static final class id {
         public static final int MessageText=0x7f060041;
+        public static final int PianoView=0x7f060045;
         public static final int RecvdMessage=0x7f060042;
         public static final int action_bar=0x7f06001c;
         public static final int action_bar_activity_content=0x7f060015;
@@ -1038,7 +1041,6 @@ containing a value of this type.
         public static final int button1=0x7f060044;
         public static final int checkbox=0x7f06002d;
         public static final int collapseActionView=0x7f06000d;
-        public static final int container=0x7f060045;
         public static final int default_activity_button=0x7f060028;
         public static final int dialog=0x7f06000e;
         public static final int disableHome=0x7f060008;
@@ -1064,10 +1066,12 @@ containing a value of this type.
         public static final int never=0x7f060009;
         public static final int none=0x7f060010;
         public static final int normal=0x7f060000;
+        public static final int playback=0x7f060048;
         public static final int port=0x7f060040;
         public static final int progress_circular=0x7f060018;
         public static final int progress_horizontal=0x7f060019;
         public static final int radio=0x7f06002f;
+        public static final int record=0x7f060049;
         public static final int search_badge=0x7f060032;
         public static final int search_bar=0x7f060031;
         public static final int search_button=0x7f060033;
@@ -1216,8 +1220,10 @@ containing a value of this type.
         public static final int menu_settings=0x7f0b0014;
         public static final int openKeyboard=0x7f0b001d;
         public static final int play=0x7f0b0017;
+        public static final int playback=0x7f0b001f;
         public static final int playsong=0x7f0b000f;
         public static final int printsong=0x7f0b0011;
+        public static final int record=0x7f0b001e;
         public static final int refresh_socket=0x7f0b0019;
         public static final int stop=0x7f0b0018;
         public static final int title_activity_main=0x7f0b0015;

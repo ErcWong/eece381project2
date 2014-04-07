@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -45,8 +46,6 @@ public class MainActivity extends Activity {
 		TCPReadTimerTask tcp_task = new TCPReadTimerTask();
 		Timer tcp_timer = new Timer();
 		tcp_timer.schedule(tcp_task, 3000, 500);
-		// Intent intent = new Intent(MainActivity.this, PianoActivity.class);
-		// startActivity(intent);
 	}
 
 	@Override

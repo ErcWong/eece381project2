@@ -18,5 +18,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="openKeyboard">Keyboard</string>
+    <string name="record">Record</string>
+    <string name="playback">Playback</string>
 
 </resources>
