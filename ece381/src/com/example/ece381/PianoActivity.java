@@ -24,9 +24,11 @@ public class PianoActivity extends ActionBarActivity {
 	private static int width;
 	private static int height;
 	private static int whtKey = 7;
+	private static int whtBlkKey = 12;
+	private static int keyRatio1 = 12;
+	private static int keyRatio2 = 20;
 
 	public static List<PianoKey> pianoKeyList = new ArrayList<PianoKey>();
-	private static PianoKey keyA;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,50 +59,79 @@ public class PianoActivity extends ActionBarActivity {
 		pianoKeyList.add(new PianoKey("keyC", getSoundPool().load(this,
 				R.raw.keyc, 1), false, 1,
 				new Rect(1, 1, width, height / whtKey), new Rect(1, 1,
-						width * 12 / 20, height / whtKey), new Rect(
-						width * 12 / 20, 1, width, height * 1 / 12)));
+						width * keyRatio1 / keyRatio2, height / whtKey), new Rect(
+						width * keyRatio1 / keyRatio2, 1, width, height * 1 / whtBlkKey)));
+
 		pianoKeyList.add(new PianoKey("keyD", getSoundPool().load(this,
 				R.raw.keyd, 1), false, 1, new Rect(1, height / whtKey, width,
-				height * 2 / whtKey), new Rect(), new Rect()));
+				height * 2 / whtKey), new Rect(1, height / whtKey,
+				width * keyRatio1 / keyRatio2, height * 2 / whtKey), new Rect(
+				width * keyRatio1 / keyRatio2, height * 2 / whtBlkKey, width, height * 3 / whtBlkKey)));
+
 		pianoKeyList.add(new PianoKey("keyE", getSoundPool().load(this,
 				R.raw.keye, 1), false, 1, new Rect(1, height * 2 / whtKey,
-				width, height * 3 / whtKey), new Rect(), new Rect()));
+				width, height * 3 / whtKey), new Rect(1, height * 2 / whtKey,
+				width * keyRatio1 / keyRatio2, height * 3 / whtKey), new Rect(
+				width * keyRatio1 / keyRatio2, height * 4 / whtBlkKey, width, height * 5 / whtBlkKey)));
+
 		pianoKeyList.add(new PianoKey("keyF", getSoundPool().load(this,
-				R.raw.keyf, 1), false, 1, new Rect(1, height * 3 / whtKey,
-				width, height * 4 / whtKey), new Rect(), new Rect()));
+				R.raw.keyf, 1), false, 1, new Rect(1, height * 3 / whtKey + 1,
+				width, height * 4 / whtKey), new Rect(1, height * 3 / whtKey
+				+ 1, width * keyRatio1 / keyRatio2, height * 4 / whtKey), new Rect(
+				width * keyRatio1 / keyRatio2, height * 5 / whtBlkKey, width, height * 6 / whtBlkKey)));
+
 		pianoKeyList.add(new PianoKey("keyG", getSoundPool().load(this,
 				R.raw.keyg, 1), false, 1, new Rect(1, height * 4 / whtKey,
-				width, height * 5 / whtKey), new Rect(), new Rect()));
+				width, height * 5 / whtKey), new Rect(1, height * 4 / whtKey,
+				width * keyRatio1 / keyRatio2, height * 5 / whtKey), new Rect(
+				width * keyRatio1 / keyRatio2, height * 7 / whtBlkKey, width, height * 8 / whtBlkKey)));
+
 		pianoKeyList.add(new PianoKey("keyA", getSoundPool().load(this,
 				R.raw.keya, 1), false, 1, new Rect(1, height * 5 / whtKey,
-				width, height * 6 / whtKey), new Rect(), new Rect()));
+				width, height * 6 / whtKey), new Rect(1, height * 5 / whtKey,
+				width * keyRatio1 / keyRatio2, height * 6 / whtKey), new Rect(
+				width * keyRatio1 / keyRatio2, height * 9 / whtBlkKey, width, height * 10 / whtBlkKey)));
+
 		pianoKeyList.add(new PianoKey("keyB", getSoundPool().load(this,
 				R.raw.keyb, 1), false, 1, new Rect(1, height * 6 / whtKey,
-				width, height * 7 / whtKey), new Rect(), new Rect()));
-		System.out.print(pianoKeyList.get(0).getRect());
+				width, height * 7 / whtKey), new Rect(1, height * 6 / whtKey,
+				width * keyRatio1 / keyRatio2, height * 7 / whtKey), new Rect(
+				width * keyRatio1 / keyRatio2, height * 11 / whtBlkKey, width, height * whtBlkKey / whtBlkKey)));
+
 		// Black Keys: Db Eb Gb Ab Bb
 		pianoKeyList.add(new PianoKey("keyDb", getSoundPool().load(this,
-				R.raw.keydb, 1), false, 1, new Rect(width * 10 / 20,
-				height / 12, width, height * 2 / 12), new Rect(), new Rect()));
+				R.raw.keydb, 1), false, 1, new Rect(width * 10 / keyRatio2,
+				height / whtBlkKey, width, height * 2 / whtBlkKey), new Rect(width * 10 / keyRatio2,
+				height / whtBlkKey, width, height * 2 / whtBlkKey), new Rect()));
 		pianoKeyList.add(new PianoKey("keyEb", getSoundPool().load(this,
-				R.raw.keyeb, 1), false, 1, new Rect(width * 10 / 20,
-				height * 3 / 12, width, height * 4 / 12), new Rect(),
+				R.raw.keyeb, 1), false, 1, new Rect(width * 10 / keyRatio2,
+				height * 3 / whtBlkKey, width, height * 4 / whtBlkKey), new Rect(
+				width * 10 / keyRatio2, height * 3 / whtBlkKey, width, height * 4 / whtBlkKey),
 				new Rect()));
 		pianoKeyList.add(new PianoKey("keyGb", getSoundPool().load(this,
-				R.raw.keygb, 1), false, 1, new Rect(width * 10 / 20,
-				height * 6 / 12 + 13, width, height * 7 / 12 + 13), new Rect(),
-				new Rect()));
+				R.raw.keygb, 1), false, 1, new Rect(width * 10 / keyRatio2,
+				height * 6 / whtBlkKey + 13, width, height * 7 / whtBlkKey + 13), new Rect(
+				width * 10 / keyRatio2, height * 6 / whtBlkKey + 13, width,
+				height * 7 / whtBlkKey + 13), new Rect()));
 		pianoKeyList.add(new PianoKey("keyAb", getSoundPool().load(this,
-				R.raw.keyab, 1), false, 1, new Rect(width * 10 / 20,
-				height * 8 / 12 + 11, width, height * 9 / 12 + 11), new Rect(),
-				new Rect()));
+				R.raw.keyab, 1), false, 1, new Rect(width * 10 / keyRatio2,
+				height * 8 / whtBlkKey + 11, width, height * 9 / whtBlkKey + 11), new Rect(
+				width * 10 / keyRatio2, height * 8 / whtBlkKey + 11, width,
+				height * 9 / whtBlkKey + 11), new Rect()));
 		pianoKeyList.add(new PianoKey("keyBb", getSoundPool().load(this,
-				R.raw.keybb, 1), false, 1, new Rect(width * 10 / 20,
-				height * 10 / 12, width, height * 11 / 12), new Rect(),
+				R.raw.keybb, 1), false, 1, new Rect(width * 10 / keyRatio2,
+				height * 10 / whtBlkKey, width, height * 11 / whtBlkKey), new Rect(
+				width * 10 / keyRatio2, height * 10 / whtBlkKey, width, height * 11 / whtBlkKey),
 				new Rect()));
 		for (PianoKey key : pianoKeyList) {
-			System.out.println(key.getKeyName() + key.getKeyid());
+			if (key.getKeyName().contentEquals("keyE")
+					|| key.getKeyName().contentEquals("keyF")
+					|| key.getKeyName().contentEquals("keyG")) {
+				System.out.println(key.getKeyName()
+						+ key.getKeyShape().getRectLeft());
+			}
 		}
+		// System.out.println("Size of array" + pianoKeyList.size());
 
 		if (PianoKey.loaded = false) {
 			System.out.println("PianoActivity not loaded");
@@ -158,15 +189,7 @@ public class PianoActivity extends ActionBarActivity {
 	public static void setWidth(int width) {
 		PianoActivity.width = width;
 	}
-
-	public static PianoKey getKeyA() {
-		return keyA;
-	}
-
-	public void setKeyA(PianoKey keyA) {
-		PianoActivity.keyA = keyA;
-	}
-
+	
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
