@@ -11,11 +11,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -31,6 +33,14 @@ public class PianoView extends View implements View.OnLongClickListener,
 	private static Context c;
 	private final String TAG = "PianoView";
 	private boolean singlePress;
+	
+	//For pinch and zoom
+    protected float oldDist = 1f; 
+    protected PointF mid = new PointF();
+    static final int NONE = 0;
+    static final int ZOOM = 1;
+    int mode = NONE;
+    protected float scale = 1;
 
 	// private Set<Integer> keysPlayed = new HashSet<Integer>();
 	private Rect filler = new Rect(0, 0, 600, 1280);
@@ -139,6 +149,14 @@ public class PianoView extends View implements View.OnLongClickListener,
 				result = returnValueOnActionDown;
 			}
 			keyPress((int) eventData.x, (int) eventData.y);
+			
+			/*mode = NONE;
+			oldDist = spacing(event);           
+            if(oldDist > 10f) {
+                //savedMatrix.set(matrix);
+                //midPoint(mid, event);
+                mode = ZOOM;
+            } */
 			break;
 		case MotionEvent.ACTION_MOVE:
 			for (int i = 0; i < event.getPointerCount(); i++) {
@@ -155,6 +173,15 @@ public class PianoView extends View implements View.OnLongClickListener,
 			if (returnValueOnActionMove) {
 				result = returnValueOnActionMove;
 			}
+			/*if(mode == ZOOM) {
+                float newDist = spacing(event);               
+                if(newDist > 10f) {
+                    //matrix.set(savedMatrix);
+                    scale = newDist / oldDist;                   
+                    //matrix.getValues(mvals);
+                    //currentScale = mvals[0];
+                }
+			}*/
 			break;
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_POINTER_UP:
@@ -165,6 +192,8 @@ public class PianoView extends View implements View.OnLongClickListener,
 			if (returnValueOnActionUp) {
 				result = returnValueOnActionUp;
 			}
+			
+			mode = NONE;
 			break;
 		case MotionEvent.ACTION_OUTSIDE:
 			break;
@@ -177,6 +206,13 @@ public class PianoView extends View implements View.OnLongClickListener,
 				"Touch method took " + Long.toString(endTime - startTime));
 		return result;
 	}
+	
+	//finger space checking for zoom
+	public float spacing(MotionEvent event) {
+        float x = event.getX(0) - event.getX(1);
+        float y = event.getY(0) - event.getY(1);
+        return FloatMath.sqrt(x * x + y * y);
+    }
 
 	@Override
 	public void onClick(View v) {

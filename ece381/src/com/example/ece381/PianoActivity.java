@@ -37,6 +37,8 @@ public class PianoActivity extends ActionBarActivity {
 	private static int keyRatio1 = 2;
 	private static int keyRatio2 = 3;
 	private static int keyWidth = 107;
+	
+	public int key_shift = 0;
 
 	public static List<PianoKey> pianoKeyList = new ArrayList<PianoKey>();
 	public static List<NotesRecord> notes;
@@ -165,6 +167,12 @@ public class PianoActivity extends ActionBarActivity {
 					}, note.interval - recordTimer.getStart());
 				}
 			}
+			break;
+		case R.id.keysLeft:
+			key_shift -= 5;
+			break;
+		case R.id.keysRight:
+			key_shift += 5;
 			break;
 		}
 		return super.onOptionsItemSelected(item);

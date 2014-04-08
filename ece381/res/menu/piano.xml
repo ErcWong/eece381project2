@@ -20,5 +20,17 @@
         android:showAsAction="always"
         android:title="@string/record"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/keysRight"
+        android:icon="@drawable/ic_action_next_item"
+        android:showAsAction="always"
+        android:title="@string/keysRight"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/keysLeft"
+        android:icon="@drawable/ic_action_previous_item"
+        android:showAsAction="always"
+        android:title="@string/keysLeft"
+        app:showAsAction="always"/>
 
 </menu>
