@@ -20,5 +20,6 @@
     <string name="openKeyboard">Keyboard</string>
     <string name="record">Record</string>
     <string name="playback">Playback</string>
+    <string name="pause">Pause</string>
 
 </resources>

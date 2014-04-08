@@ -21,6 +21,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.playback.NotesRecord;
@@ -105,6 +108,24 @@ public class PianoActivity extends ActionBarActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.piano, menu);
+		View toggle = LayoutInflater.from(this).inflate(
+				R.layout.switch_actionbar, null);
+		getSupportActionBar().setCustomView(toggle);
+		getSupportActionBar().setDisplayShowCustomEnabled(true);
+		Switch switchActionBar = (Switch) findViewById(R.id.SwitchForActionBar);
+		switchActionBar
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						if (isChecked) {
+							PianoView.setIdle(false);
+						} else {
+							PianoView.setIdle(true);
+						}
+					}
+				});
 		return true;
 	}
 
@@ -124,12 +145,21 @@ public class PianoActivity extends ActionBarActivity {
 				notes = new ArrayList<NotesRecord>();
 				Toast.makeText(this, "Record", Toast.LENGTH_SHORT).show();
 				recordTimer.startTimer();
-				NotesRecord.startTime = recordTimer.getStart();
+				NotesRecord.startTime = recordTimer.getStartTime();
 				notes.add(new NotesRecord(99, NotesRecord.startTime));
 			} else {
 				recordTimer.stopTimer();
 				Toast.makeText(this, recordTimer.totalElapsedTime(),
 						Toast.LENGTH_SHORT).show();
+			}
+			break;
+		case R.id.pause:
+			if (notes != null) {
+				if (!recordTimer.isTimerRunning()) {
+					recordTimer.resumeTimer();
+				} else {
+					recordTimer.pauseTimer();
+				}
 			}
 			break;
 		case R.id.playback:
@@ -162,7 +192,7 @@ public class PianoActivity extends ActionBarActivity {
 								}, 150);
 							}
 						}
-					}, note.interval - recordTimer.getStart());
+					}, note.interval);
 				}
 			}
 			break;

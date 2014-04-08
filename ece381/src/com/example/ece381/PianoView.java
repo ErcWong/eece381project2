@@ -31,6 +31,7 @@ public class PianoView extends View implements View.OnLongClickListener,
 	private static Context c;
 	private final String TAG = "PianoView";
 	private boolean singlePress;
+	private static boolean idle;
 
 	// private Set<Integer> keysPlayed = new HashSet<Integer>();
 	private Rect filler = new Rect(0, 0, 600, 1280);
@@ -42,6 +43,7 @@ public class PianoView extends View implements View.OnLongClickListener,
 		eventDataMap = new HashMap<Integer, EventData>();
 		this.setOnLongClickListener(this);
 		this.setOnClickListener(this);
+		PianoView.idle = true;
 	}
 
 	public PianoView(Context context, AttributeSet attrs) {
@@ -50,6 +52,7 @@ public class PianoView extends View implements View.OnLongClickListener,
 		eventDataMap = new HashMap<Integer, EventData>();
 		this.setOnLongClickListener(this);
 		this.setOnClickListener(this);
+		PianoView.idle = true;
 	}
 
 	@Override
@@ -216,26 +219,30 @@ public class PianoView extends View implements View.OnLongClickListener,
 						if (PianoActivity.getRecordTimer().isTimerRunning()) {
 							PianoActivity.notes.add(new NotesRecord(key
 									.getKeyid(), PianoActivity.getRecordTimer()
-									.timestamp()));
+									.getFinalTime()));
 						}
 
 					}
 				}
-
 			}, 0);
 		}
 		long endTime = SystemClock.elapsedRealtime();
 		Log.d(TIMINGTAG, "KeyPress took " + Long.toString(endTime - startTime));
 	}
 
-	public void keyMove(EventData eD, int x, int y) {
+	public void keyMove(EventData eD, final int x, final int y) {
 		// int currentKey = eD.currentKey;
 		long startTime = SystemClock.elapsedRealtime();
-		for (PianoKey key : PianoActivity.pianoKeyList) {
+		for (final PianoKey key : PianoActivity.pianoKeyList) {
 			if (isSinglePress()) {
 				if (key.getKeyShape().contains(x, y) && !key.isPlayed()) {
 					playSound(key);
 					key.setPlayed(true);
+					sendNote(key);
+					if (PianoActivity.getRecordTimer().isTimerRunning()) {
+						PianoActivity.notes.add(new NotesRecord(key.getKeyid(),
+								PianoActivity.getRecordTimer().getFinalTime()));
+					}
 				} else if (!key.getKeyShape().contains(x, y)) {
 					key.setPlayed(false);
 				}
@@ -333,12 +340,24 @@ public class PianoView extends View implements View.OnLongClickListener,
 	}
 
 	public static void sendNote(PianoKey key) {
-		if (MainActivity.isDe2Connected()) {
+		if (MainActivity.isDe2Connected() && !PianoView.isIdle()) {
 			MyApplication app = (MyApplication) c.getApplicationContext();
 
 			// Get the message from the box
 
 			String msg = key.getKeyName().toString();
+			
+			if (msg == "Db") {
+				msg = "d";
+			} else if (msg == "Eb") {
+				msg = "e";
+			} else if (msg == "Gb") {
+				msg = "g";
+			} else if (msg == "Ab") {
+				msg = "a";
+			} else if (msg == "Bb") {
+				msg = "b";
+			}
 
 			// Create an array of bytes. First byte will be the
 			// message length, and the next ones will be the message
@@ -361,11 +380,11 @@ public class PianoView extends View implements View.OnLongClickListener,
 				e.printStackTrace();
 			}
 		} else {
-			Toast msg = Toast.makeText(PianoView.c, "not Connected",
-					Toast.LENGTH_SHORT);
-			msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2,
-					msg.getYOffset() / 2);
-			msg.show();
+			// Toast msg = Toast.makeText(PianoView.c, "not Connected",
+			// Toast.LENGTH_SHORT);
+			// msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2,
+			// msg.getYOffset() / 2);
+			// msg.show();
 		}
 	}
 
@@ -423,6 +442,14 @@ public class PianoView extends View implements View.OnLongClickListener,
 
 	public boolean getReturnValueOnLongClick() {
 		return returnValueOnLongClick;
+	}
+
+	public static boolean isIdle() {
+		return idle;
+	}
+
+	public static void setIdle(boolean idle) {
+		PianoView.idle = idle;
 	}
 
 	private Paint paint = new Paint();

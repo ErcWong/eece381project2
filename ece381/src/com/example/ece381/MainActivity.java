@@ -45,8 +45,6 @@ public class MainActivity extends Activity {
 		TCPReadTimerTask tcp_task = new TCPReadTimerTask();
 		Timer tcp_timer = new Timer();
 		tcp_timer.schedule(tcp_task, 3000, 500);
-		// Intent intent = new Intent(MainActivity.this, PianoActivity.class);
-		// startActivity(intent);
 	}
 
 	@Override
@@ -60,7 +58,7 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(MainActivity.this, PianoActivity.class);
 		startActivity(intent);
 	}
-	
+
 	// Route called when the user presses "connect"
 
 	public void openSocket(View view) {
@@ -71,6 +69,7 @@ public class MainActivity extends Activity {
 
 		if (app.sock != null && app.sock.isConnected() && !app.sock.isClosed()) {
 			msgbox.setText("Socket already open");
+			setDe2Connected(true);
 			return;
 		} else {
 			msgbox.setText("Not connected");
@@ -79,53 +78,57 @@ public class MainActivity extends Activity {
 		// open the socket. SocketConnect is a new subclass
 		// (defined below). This creates an instance of the subclass
 		// and executes the code in it.
-
+		
 		new SocketConnect().execute((Void) null);
 	}
 
 	// Called when the user wants to send a message
 
 	public void sendMessage(View view) {
-		MyApplication app = (MyApplication) getApplication();
+		if (isDe2Connected()) {
+			MyApplication app = (MyApplication) getApplication();
 
-		// Get the message from the box
+			// Get the message from the box
 
-		EditText et = (EditText) findViewById(R.id.MessageText);
-		String msg = et.getText().toString();
+			EditText et = (EditText) findViewById(R.id.MessageText);
+			String msg = et.getText().toString();
 
-		// Create an array of bytes. First byte will be the
-		// message length, and the next ones will be the message
+			// Create an array of bytes. First byte will be the
+			// message length, and the next ones will be the message
 
-		byte buf[] = new byte[msg.length() + 1];
-		buf[0] = (byte) msg.length();
-		System.arraycopy(msg.getBytes(), 0, buf, 1, msg.length());
+			byte buf[] = new byte[msg.length() + 1];
+			buf[0] = (byte) msg.length();
+			System.arraycopy(msg.getBytes(), 0, buf, 1, msg.length());
 
-		// Now send through the output stream of the socket
+			// Now send through the output stream of the socket
 
-		OutputStream out;
-		try {
-			out = app.sock.getOutputStream();
+			OutputStream out;
 			try {
-				out.write(buf, 0, msg.length() + 1);
+				out = app.sock.getOutputStream();
+				try {
+					out.write(buf, 0, msg.length() + 1);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
 	// Called when the user closes a socket
 
 	public void closeSocket(View view) {
-		MyApplication app = (MyApplication) getApplication();
-		Socket s = app.sock;
-		try {
-			s.getOutputStream().close();
-			s.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		if (isDe2Connected()) {
+			MyApplication app = (MyApplication) getApplication();
+			Socket s = app.sock;
+			try {
+				s.getOutputStream().close();
+				s.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} 
 	}
 
 	// Construct an IP address from the four boxes
