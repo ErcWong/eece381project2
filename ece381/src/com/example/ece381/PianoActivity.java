@@ -13,13 +13,13 @@ import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -34,24 +34,25 @@ public class PianoActivity extends ActionBarActivity {
 	private static int height;
 	private static int whtKey = 7;
 	private static int whtBlkKey = 12;
-	private static int keyRatio1 = 12;
-	private static int keyRatio2 = 20;
+	private static int keyRatio1 = 2;
+	private static int keyRatio2 = 3;
+	private static int keyWidth = 107;
 
 	public static List<PianoKey> pianoKeyList = new ArrayList<PianoKey>();
-	public static List<NotesRecord> notes = new ArrayList<NotesRecord>();
+	public static List<NotesRecord> notes;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		long startTime = SystemClock.elapsedRealtime();
 		super.onCreate(savedInstanceState);
-		 requestWindowFeature(Window.FEATURE_NO_TITLE);
-		 getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//		 pianoView = new PianoView(this);
-//		 setContentView(pianoView);
+		// requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		pianoView = new PianoView(this);
+		setContentView(pianoView);
 
-		pianoView = (PianoView) findViewById(R.id.PianoView);
-		setContentView(R.layout.activity_piano);
+		// pianoView = (PianoView) findViewById(R.id.PianoView);
+		// setContentView(R.layout.activity_piano);
 
 		// Initiate timer
 		recordTimer = new Timer();
@@ -73,14 +74,16 @@ public class PianoActivity extends ActionBarActivity {
 
 		// Add keys to the list
 		pianoKeyList.clear();
-		addWhiteKeys();
-		addBlackKeys();
+		addWhiteKeysHorizontal();
+		addBlackKeysHorizontal();
+		// addWhiteKeys();
+		// addBlackKeys();
 
 		// Check key dimensions
 		for (PianoKey key : pianoKeyList) {
 			System.out.println(key.getKeyName()
 					+ key.getKeyShape().getRectLeft()
-					+ key.getKeyShape().getRectLeft());
+					+ key.getKeyShape().getRectRight());
 		}
 
 		// make sure sounds are loaded
@@ -118,7 +121,7 @@ public class PianoActivity extends ActionBarActivity {
 			break;
 		case R.id.record:
 			if (!recordTimer.isTimerRunning()) {
-				notes.clear();
+				notes = new ArrayList<NotesRecord>();
 				Toast.makeText(this, "Record", Toast.LENGTH_SHORT).show();
 				recordTimer.startTimer();
 				NotesRecord.startTime = recordTimer.getStart();
@@ -130,46 +133,131 @@ public class PianoActivity extends ActionBarActivity {
 			}
 			break;
 		case R.id.playback:
-			for (NotesRecord note : notes) {
-				System.out.println("Notes:" + note.key + " ivl:"
-						+ note.interval);
-			}
-			for (final NotesRecord note : notes) {
-				Handler handler = new Handler();
-				handler.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						if (note.key != 99) {
-							PianoActivity.getSoundPool().play(note.key, 1, 1,
-									0, 0, 1);
-							PianoActivity.pianoKeyList.get(note.key - 1)
-									.setPlayed(true);
-							pianoView.invalidate();
-							Handler handler = new Handler();
-							handler.postDelayed(new Runnable() {
+			showMemory("Before Playback");
+			if (notes != null) {
+				for (NotesRecord note : notes) {
+					System.out.println("Notes:" + note.key + " ivl:"
+							+ note.interval);
+				}
+				for (final NotesRecord note : notes) {
+					Handler handler = new Handler();
+					handler.postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							if (note.key != 99) {
+								PianoActivity.getSoundPool().play(note.key, 1,
+										1, 0, 0, 1);
+								PianoActivity.pianoKeyList.get(note.key - 1)
+										.setPlayed(true);
+								pianoView.invalidate();
+								Handler handler = new Handler();
+								handler.postDelayed(new Runnable() {
 
-								@Override
-								public void run() {
-									PianoActivity.pianoKeyList
-											.get(note.key - 1).setPlayed(false);
-									pianoView.invalidate();
-								}
-							}, 150);
+									@Override
+									public void run() {
+										PianoActivity.pianoKeyList.get(
+												note.key - 1).setPlayed(false);
+										pianoView.invalidate();
+									}
+								}, 150);
+							}
 						}
-					}
-				}, note.interval - recordTimer.getStart());
+					}, note.interval - recordTimer.getStart());
+				}
 			}
 			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void screenSize() {
+		int actionBarHeight;
+		TypedValue tv = new TypedValue();
+		if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+			actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,
+					getResources().getDisplayMetrics());
+		} else {
+			actionBarHeight = 0;
+		}
 		Display display = getWindowManager().getDefaultDisplay();
 		setWidth(display.getWidth());
 		// setWidth(600);
-		setHeight(display.getHeight());
-		System.out.println("Width" + width + " Height" + getHeight());
+		setHeight(display.getHeight() - actionBarHeight);
+	}
+
+	public void addWhiteKeysHorizontal() {
+		pianoKeyList.add(new PianoKey("C", getSoundPool().load(this,
+				R.raw.keyc, 1), false, 1,
+				new Rect(1, 1, width / whtKey, height), new Rect(1, height
+						* keyRatio1 / keyRatio2, width / whtKey, height),
+				new Rect(1, 1, width * 1 / whtBlkKey + 5, height * keyRatio1
+						/ keyRatio2)));
+		pianoKeyList.add(new PianoKey("D", getSoundPool().load(this,
+				R.raw.keyd, 1), false, 1, new Rect(width * 1 / whtKey, 1, width
+				* 2 / whtKey, height), new Rect(width * 1 / whtKey, height
+				* keyRatio1 / keyRatio2, width * 2 / whtKey, height), new Rect(
+				width * 2 / whtBlkKey + 5, 1, width * 3 / whtBlkKey + 10,
+				height * keyRatio1 / keyRatio2)));
+		pianoKeyList.add(new PianoKey("E", getSoundPool().load(this,
+				R.raw.keye, 1), false, 1, new Rect(width * 2 / whtKey, 1, width
+				* 3 / whtKey, height), new Rect(width * 2 / whtKey, height
+				* keyRatio1 / keyRatio2, width * 3 / whtKey, height), new Rect(
+				width * 4 / whtBlkKey + 10, 1, width * 5 / whtBlkKey, height
+						* keyRatio1 / keyRatio2)));
+		pianoKeyList.add(new PianoKey("F", getSoundPool().load(this,
+				R.raw.keyf, 1), false, 1, new Rect(width * 3 / whtKey, 1, width
+				* 4 / whtKey, height), new Rect(width * 3 / whtKey, height
+				* keyRatio1 / keyRatio2, width * 4 / whtKey, height), new Rect(
+				width * 5 / whtBlkKey + 10, 1, width * 6 / whtBlkKey + 20,
+				height * keyRatio1 / keyRatio2)));
+		pianoKeyList.add(new PianoKey("G", getSoundPool().load(this,
+				R.raw.keyg, 1), false, 1, new Rect(width * 4 / whtKey, 1, width
+				* 5 / whtKey, height), new Rect(width * 4 / whtKey, height
+				* keyRatio1 / keyRatio2, width * 5 / whtKey + 3, height),
+				new Rect(width * 7 / whtBlkKey + 20, 1, width * 8 / whtBlkKey
+						+ 10, height * keyRatio1 / keyRatio2)));
+		pianoKeyList.add(new PianoKey("A", getSoundPool().load(this,
+				R.raw.keya, 1), false, 1, new Rect(width * 5 / whtKey, 1, width
+				* 6 / whtKey, height), new Rect(width * 5 / whtKey + 3, height
+				* keyRatio1 / keyRatio2, width * 6 / whtKey, height), new Rect(
+				width * 9 / whtBlkKey + 10, 1, width * 10 / whtBlkKey, height
+						* keyRatio1 / keyRatio2)));
+		pianoKeyList.add(new PianoKey("B", getSoundPool().load(this,
+				R.raw.keyb, 1), false, 1, new Rect(width * 6 / whtKey, 1, width
+				* 7 / whtKey, height), new Rect(width * 6 / whtKey, height
+				* keyRatio1 / keyRatio2, width * 7 / whtKey, height), new Rect(
+				width * 11 / whtBlkKey, 1, width * 12 / whtBlkKey, height
+						* keyRatio1 / keyRatio2)));
+	}
+
+	public void addBlackKeysHorizontal() {
+		// Black Keys: Db Eb Gb Ab Bb
+		pianoKeyList.add(new PianoKey("Db", getSoundPool().load(this,
+				R.raw.keydb, 1), false, 1, new Rect(width / whtBlkKey + 5, 1,
+				width * 2 / whtBlkKey + 5, height * 2 / 3), new Rect(width
+				/ whtBlkKey + 5, 1, width * 2 / whtBlkKey + 5, height * 2 / 3),
+				new Rect()));
+		pianoKeyList.add(new PianoKey("Eb", getSoundPool().load(this,
+				R.raw.keyeb, 1), false, 1, new Rect(width * 3 / whtBlkKey + 10,
+				1, width * 4 / whtBlkKey + 10, height * 2 / 3), new Rect(width
+				* 3 / whtBlkKey + 10, 1, width * 4 / whtBlkKey + 10,
+				height * 2 / 3), new Rect()));
+		pianoKeyList.add(new PianoKey("Gb", getSoundPool().load(this,
+				R.raw.keygb, 1), false, 1, new Rect(width * 6 / whtBlkKey + 20,
+				1, width * 7 / whtBlkKey + 20, height * 2 / 3), new Rect(width
+				* 6 / whtBlkKey + 20, 1, width * 7 / whtBlkKey + 20,
+				height * 2 / 3), new Rect()));
+		pianoKeyList.add(new PianoKey("Ab", getSoundPool().load(this,
+				R.raw.keyab, 1), false, 1, new Rect(width * 8 / whtBlkKey + 10,
+				1, width * 9 / whtBlkKey + 10, height * 2 / 3), new Rect(width
+				* 8 / whtBlkKey + 10, 1, width * 9 / whtBlkKey + 10,
+				height * 2 / 3), new Rect()));
+		pianoKeyList.add(new PianoKey("Bb", getSoundPool().load(this,
+				R.raw.keybb, 1), false, 1, new Rect(width * 10 / whtBlkKey, 1,
+				width * 11 / whtBlkKey, height * 2 / 3), new Rect(width * 10
+				/ whtBlkKey, 1, width * 11 / whtBlkKey, height * 2 / 3),
+				new Rect()));
 	}
 
 	public void addWhiteKeys() {
@@ -254,6 +342,15 @@ public class PianoActivity extends ActionBarActivity {
 				/ keyRatio2, height * 10 / whtBlkKey, width, height * 11
 				/ whtBlkKey), new Rect(width * keyRatio1 / keyRatio2, height
 				* 10 / whtBlkKey, width, height * 11 / whtBlkKey), new Rect()));
+	}
+
+	public static void showMemory(String label) {
+		Runtime rt = Runtime.getRuntime();
+		long free = rt.freeMemory();
+		long total = rt.totalMemory();
+		long used = total - free;
+		System.out.println(label + "free:" + free + " total:" + total
+				+ " used:" + used);
 	}
 
 	public static SoundPool getSoundPool() {

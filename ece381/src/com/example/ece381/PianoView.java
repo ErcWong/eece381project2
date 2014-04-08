@@ -2,22 +2,17 @@ package com.example.ece381;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.example.playback.NotesRecord;
-import com.example.playback.Timer;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.AttributeSet;
@@ -28,12 +23,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.playback.NotesRecord;
+
 public class PianoView extends View implements View.OnLongClickListener,
 		View.OnClickListener {
 	private static final String TIMINGTAG = "Timing";
-	static Context c;
+	private static Context c;
 	private final String TAG = "PianoView";
-
 	private boolean singlePress;
 
 	// private Set<Integer> keysPlayed = new HashSet<Integer>();
@@ -71,6 +67,9 @@ public class PianoView extends View implements View.OnLongClickListener,
 				}
 				paint.setStyle(Paint.Style.FILL);
 				canvas.drawRect(key.getRect(), paint);
+				paint.setStyle(Paint.Style.STROKE);
+				paint.setStrokeWidth(10);
+				canvas.drawRect(key.getRect(), paint);
 			} else {
 				if (key.isPlayed()) {
 					paint.setColor(Color.parseColor("#14C1FF"));
@@ -90,17 +89,20 @@ public class PianoView extends View implements View.OnLongClickListener,
 			// paint white letters for flats
 			if (key.getKeyName().contains("b")) {
 				paint.setColor(Color.WHITE);
+				offset = 40;
 			} else {
 				paint.setColor(Color.BLACK);
+				offset = 23;
 			}
-
+			paint.setTextSize(60);
+			paint.setTypeface(Typeface.DEFAULT_BOLD);
 			canvas.drawText(key.getKeyName(), key.getRect().centerX() - offset,
-					key.getRect().centerY(), paint);
-			canvas.drawText(String.valueOf(key.isPlayed()), key.getRect()
-					.centerX(), key.getRect().centerY(), paint);
+					key.getRect().height() - 20, paint);
+			// canvas.drawText(String.valueOf(key.isPlayed()), key.getRect()
+			// .centerX(), key.getRect().centerY(), paint);
 		}
 		long endTime = SystemClock.elapsedRealtime();
-		Log.d(TIMINGTAG,"Drawing took " + Long.toString(endTime-startTime));
+		Log.d(TIMINGTAG, "Drawing took " + Long.toString(endTime - startTime));
 	}
 
 	@Override
@@ -119,16 +121,17 @@ public class PianoView extends View implements View.OnLongClickListener,
 		int pointerIndex = event.getActionIndex();
 		int pointerId = event.getPointerId(pointerIndex);
 
+		if (event.getPointerCount() > 1) {
+			setSinglePress(false);
+		} else {
+			setSinglePress(true);
+		}
+
 		boolean result = false;
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
 		case MotionEvent.ACTION_POINTER_DOWN:
 			EventData eventData = new EventData();
-			if (event.getPointerCount() > 1) {
-				setSinglePress(false);
-			} else {
-				setSinglePress(true);
-			}
 			eventData.x = event.getX(pointerIndex);
 			eventData.y = event.getY(pointerIndex);
 			eventDataMap.put(Integer.valueOf(pointerId), eventData);
@@ -170,7 +173,8 @@ public class PianoView extends View implements View.OnLongClickListener,
 		invalidate();
 		// dumpEvent(event);
 		long endTime = SystemClock.elapsedRealtime();
-		Log.d(TIMINGTAG,"Touch method took " + Long.toString(endTime-startTime));
+		Log.d(TIMINGTAG,
+				"Touch method took " + Long.toString(endTime - startTime));
 		return result;
 	}
 
@@ -221,7 +225,7 @@ public class PianoView extends View implements View.OnLongClickListener,
 			}, 0);
 		}
 		long endTime = SystemClock.elapsedRealtime();
-		Log.d(TIMINGTAG,"KeyPress took " + Long.toString(endTime-startTime));
+		Log.d(TIMINGTAG, "KeyPress took " + Long.toString(endTime - startTime));
 	}
 
 	public void keyMove(EventData eD, int x, int y) {
@@ -238,7 +242,7 @@ public class PianoView extends View implements View.OnLongClickListener,
 			}
 		}
 		long endTime = SystemClock.elapsedRealtime();
-		Log.d(TIMINGTAG,"KeyMove took " + Long.toString(endTime-startTime));
+		Log.d(TIMINGTAG, "KeyMove took " + Long.toString(endTime - startTime));
 	}
 
 	// Reset key played boolean to false
@@ -252,7 +256,7 @@ public class PianoView extends View implements View.OnLongClickListener,
 			}
 		}
 		long endTime = SystemClock.elapsedRealtime();
-		Log.d(TIMINGTAG,"KeyLetGo took " + Long.toString(endTime-startTime));
+		Log.d(TIMINGTAG, "KeyLetGo took " + Long.toString(endTime - startTime));
 		// printHashSet(keysPlayed);
 	}
 
